@@ -347,8 +347,15 @@ def abrir_sessao(papel, pedido, baia, prompt, resume=None, extra=None):
     # 06/11/2026: motor = o do painel (Claude ou Codex); RETOMAR usa o motor em que a sessão nasceu (id não serve no outro)
     motor = MOTOR.qual()
     if resume:
-        motor = next((s.get("motor") or "claude" for s in EST["sessoes"].values() if s.get("claude_session") == resume),
-                     motor)
+        motor_anterior = next((s.get("motor") or "claude" for s in EST["sessoes"].values() if s.get("claude_session") == resume), motor)
+        if motor_anterior != motor:
+            # IDs de sessão não são intercambiáveis: novo Diretor recebe o contexto do projeto.
+            if papel != "diretor" or not pedido or not baia:
+                feed("gerente", "motor alterado; esta sessão precisa ser iniciada novamente", pedido)
+                return None
+            prompt = preencher("diretor.md", **ctx(pedido, baia)) + "\n\nRETOMADA: a sessão anterior usava outro motor. Preserve os arquivos existentes e continue da etapa atual; não recomece nem apague dados sem necessidade.\n\n" + prompt
+            resume = None
+            feed("gerente", f"motor alterado para {motor}; iniciando nova sessão com o contexto do pedido", pedido)
     sid = f"{pedido}-{papel}-{int(agora())}"
     LOGS.mkdir(exist_ok=True)
     logf = LOGS / f"{sid}.jsonl"
@@ -678,6 +685,11 @@ def passo():
             feed("gerente", "pedido cancelado — parei o trabalho dele", pedido)
             continue
         ativa = sessao_ativa(pedido)
+        if st == "pausado":
+            if ativa:
+                mata_sessao(ativa, "pedido pausado")
+                feed("gerente", "produção pausada; sessão encerrada", pedido)
+            continue
         if d["fase"] == "diretor" and not ativa:
             ult = EST["sessoes"].get(d.get("ultima"), {})
             if st in ("entregue",):
@@ -688,8 +700,16 @@ def passo():
             elif st == "esperando_voce":
                 d["fase"] = "parado"
                 feed("diretor", f"parou e precisa de você: {p.get('msg', '')}", pedido)
+            elif st == "produzindo" and ult.get("claude_session") and (ult.get("motor") or "claude") != MOTOR.qual():
+                # Uma troca de motor inicia outra sessão; nunca retoma no provedor anterior.
+                sid = abrir_sessao("diretor", pedido, d["baia"], "Continue a produção na etapa atual, preservando os dados existentes.", resume=ult["claude_session"])
+                if sid:
+                    d.update(ultima=sid, retomadas=0, espera_ate=0, pausou=False)
+                else:
+                    d["fase"] = "parado"
+                    feed("gerente", "Não foi possível iniciar a sessão no motor selecionado.", pedido)
             elif ult.get("claude_session") and agora() < d.get("espera_ate", 0):
-                pass   # 06/10/2026: o Diretor parou só para esperar (cota do YouTube) — retoma depois da pausa
+                pass   # espera entre retomadas no mesmo motor
             elif d.get("retomadas", 0) < MAX_RETOMADAS and ult.get("claude_session"):
                 marca = [p.get("etapa"), p.get("msg"), p.get("pct")]
                 if marca != d.get("marca"):   # houve progresso desde a última retomada: não conta como falha

@@ -1433,7 +1433,7 @@ S.Q = null; S.qSel = pref("qsel", null);
 async function loadFila(){
   let q; try { q = await api("/api/fila"); } catch { return; }
   S.Q = q;
-  const cl = $("#clStat"); cl.classList.toggle("on", q.vivo); cl.querySelector("span").textContent = q.vivo ? (q.motor_nome || "IA") + " conectado" : q.config?.gerente ? "gerente desconectado" : "funcionários desligados"; cl.title = q.vivo ? "Monitor ou funcionários ligados" : q.config?.gerente ? "O gerente está ligado na configuração, mas não responde; confira a Central" : "Abra a Central para ligar os funcionários";
+  const cl = $("#clStat"); cl.classList.toggle("on", q.vivo); cl.querySelector("span").textContent = q.vivo ? "Gerente conectado · " + (q.motor_nome || "IA") + " selecionado" : q.config?.gerente ? "gerente desconectado" : "funcionários desligados"; cl.title = q.vivo ? "O gerente responde; o motor selecionado pode não ser o mesmo de uma sessão já iniciada" : q.config?.gerente ? "O gerente está ligado na configuração, mas não responde; confira a Central" : "Abra a Central para ligar os funcionários";
   const voce = q.pedidos.filter(p => p.status === "esperando_voce").length;
   $("#nVoce").style.display = voce ? "" : "none"; $("#nVoce").textContent = voce;
   if (S.tab === "prod") renderProd();
@@ -1915,12 +1915,8 @@ function renderSide(){
   $("#bFila2").onclick = () => { N.passo = PASSOS().length - 1; renderNovo(); enfileirar(); };
 }
 async function envia(url, file, prog){
-  // 30/09/2026: lê o arquivo ANTES de enviar — arquivo do OneDrive/Drive só "na nuvem", movido ou renomeado depois de
-  // escolhido fazia o navegador falhar sem motivo ("falha de rede"). Agora o erro diz o que fazer, e o envio tenta 3 vezes.
-  let buf;
-  try { buf = await file.arrayBuffer(); }
-  catch (e) { throw new Error(`não consegui ler "${file.name}" no seu PC — escolha o arquivo de novo (se estiver no OneDrive/Google Drive, baixe para o PC antes; se você moveu ou renomeou, escolha de novo)`); }
-  if (!buf.byteLength) throw new Error(`"${file.name}" está vazio (0 bytes)`);
+  // Envia o arquivo diretamente, sem duplicar o áudio inteiro na memória da janela.
+  if (!file.size) throw new Error(`"${file.name}" está vazio (0 bytes)`);
   let ultimo;
   for (let t = 1; t <= 3; t++) {
     try {
@@ -1930,9 +1926,9 @@ async function envia(url, file, prog){
         x.timeout = 10 * 60 * 1000;
         x.upload.onprogress = e => e.lengthComputable && prog(e.loaded / e.total);
         x.onload = () => { try { const r = JSON.parse(x.responseText); r.ok ? ok(r) : no(Object.assign(new Error(r.erro || ("servidor respondeu " + x.status)), {fatal: x.status < 500})); } catch (e) { no(new Error("resposta estranha do servidor (" + x.status + ")")); } };
-        x.onerror = () => no(new Error("o painel não conseguiu falar com o servidor — confira se a janela do ABRIR_PAINEL continua aberta"));
+        x.onerror = () => no(new Error("Não foi possível ler ou enviar o arquivo. Confirme que está no PC e abra novamente o Edit.AI se o painel estiver offline."));
         x.ontimeout = () => no(new Error("o envio demorou demais"));
-        x.send(buf);
+        x.send(file);
       });
     } catch (e) { ultimo = e; if (e.fatal) break; await new Promise(r => setTimeout(r, 1500 * t)); }
   }
@@ -1941,7 +1937,7 @@ async function envia(url, file, prog){
 async function enfileirar(){
   const N = S.N; if (!arquivosOk()) return toast(N.meta.formato === "short3d" ? "Falta o tema do short" : "Falta título, roteiro ou áudio");
   const box = $("#uplBox"); $("#bFila") && ($("#bFila").disabled = true);
-  const linha = (id, nome) => { box.insertAdjacentHTML("beforeend", `<div id="u_${id}">${esc(nome)} <span>0%</span><div class="bar"><i style="width:0"></i></div></div>`); return v => { const d = $("#u_" + id); d.querySelector("span").textContent = Math.round(v * 100) + "%"; d.querySelector("i").style.width = v * 100 + "%"; }; };
+  const linha = (id, nome) => { box.insertAdjacentHTML("beforeend", `<div id="u_${id}">${esc(nome)} <span>0%</span><div class="bar"><i style="width:0"></i></div></div>`); return v => { const d = $("#u_" + id); if (!d) return; d.querySelector("span").textContent = Math.round(v * 100) + "%"; d.querySelector("i").style.width = v * 100 + "%"; }; };
   let id;
   try {
     saveState("busy", "enviando…");

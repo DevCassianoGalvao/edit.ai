@@ -118,7 +118,7 @@ function rSaude(){
     chip('Volta sozinho (Agendador)',tok?'ativo':'faltando',tok?'ok':'aviso'),
     chip('Disco C:',d.livre_gb+' GB livres',d.livre_gb<8?'erro':d.livre_gb<15?'aviso':'ok',`<div class="barra"><i style="width:${d.usado_pct}%"></i></div>`),
     chip('Pastas APAGAR',(ap.gb??'?')+' GB · '+(ap.n??'?'),ap.gb>20?'aviso':'ok',ap.n?`<div><button style="min-height:30px;padding:4px 10px" onclick='acao("esvaziar_apagar")'>Mandar p/ Lixeira</button></div>`:''),
-    chip('Claude dos funcionários',S.claude_limite?'sem acesso':'ok',S.claude_limite?'erro':'ok'),
+    chip('Último erro de IA',S.claude_limite?'registrado':'nenhum recente',S.claude_limite?'erro':'ok'),
     chip('Render',S.render?'renderizando':'livre',S.render?'ok':'')
   ].join('');
 }

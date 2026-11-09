@@ -18,6 +18,17 @@ sys.excepthook=erro
 registro('Iniciando aplicativo')
 sys.path.insert(0,str(ROOT/'.appdeps'))
 import webview
+# O pywebview desliga menus e atalhos em produção. Reativá-los permite Ctrl+V e
+# o menu de contexto sem ligar modo de depuração nem expor ferramentas de desenvolvimento.
+from webview.platforms import edgechromium
+_on_webview_ready = edgechromium.EdgeChrome.on_webview_ready
+def _ready_with_editing(self, sender, args):
+    _on_webview_ready(self, sender, args)
+    if args.IsSuccess:
+        settings = sender.CoreWebView2.Settings
+        settings.AreBrowserAcceleratorKeysEnabled = True
+        settings.AreDefaultContextMenusEnabled = True
+edgechromium.EdgeChrome.on_webview_ready = _ready_with_editing
 registro('WebView carregado')
 flags=getattr(subprocess,'CREATE_NO_WINDOW',0)
 python_console = str(Path(sys.executable).with_name('python.exe')) if Path(sys.executable).name.lower() == 'pythonw.exe' else sys.executable

@@ -310,8 +310,8 @@ def alertas(s):
         a.append({"id": "gerente_morto", "nivel": "alto", "titulo": "O gerente caiu",
                   "texto": "os funcionários estão ligados mas o gerente não responde — nenhum filme anda.", "botoes": ["ligar_servicos"]})
     if s.get("claude_limite"):
-        a.append({"id": "claude_limite", "nivel": "alto", "titulo": "IA dos funcionários (Claude/Codex) sem acesso",
-                  "texto": s["claude_limite"][:160] + " — os filmes param até o limite voltar.", "botoes": []})
+        a.append({"id": "claude_limite", "nivel": "alto", "titulo": "Último erro de acesso à IA",
+                  "texto": s["claude_limite"][:160] + " — confira o motor e a sessão atual; este aviso pode se referir a uma tentativa anterior.", "botoes": []})
     t = s.get("tarefas") or {}
     if isinstance(t, dict) and t and not all(t.values()):
         falta = ", ".join(k for k, v in t.items() if not v)

@@ -4,7 +4,7 @@
 
 **Antes de abrir o Claude, só isto:**
 
-1. Na pasta `C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\DarkEmpireCompleto\MAPA`, coloque a narração como `audio.mp3`, o roteiro como `roteiro.txt` e a legenda como `legenda.srt` (os três da mesma safra).
+1. Na pasta `C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\Edit.AI by Galvão\MAPA`, coloque a narração como `audio.mp3`, o roteiro como `roteiro.txt` e a legenda como `legenda.srt` (os três da mesma safra).
 2. Abra o Claude Code **na pasta mapa** e cole este prompt (ou o `PROMPT_v_80_20.txt`, que manda seguir este e já responde as perguntas).
 
 Nada de chave de API paga. O filme sai de **fotos de bancos públicos** (Wikimedia Commons, Openverse, NASA) mais **20% de vídeo** (vídeo do Commons/NASA e trechos curtos do YouTube), com movimento de câmera feito pelo ffmpeg e motion graphics do Remotion em duas camadas: tela cheia e sobre a imagem.
@@ -13,7 +13,7 @@ Nada de chave de API paga. O filme sai de **fotos de bancos públicos** (Wikimed
 
 ## EXECUTION MODE: FULLY AUTONOMOUS — ZERO FRICTION (after Phase -1)
 
-**Work directly in the mapa folder.** Do NOT create a new project elsewhere, do NOT scaffold a new Remotion app — `edicao/` and `edicao_remotion/` already exist. All paths are relative to `C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\DarkEmpireCompleto\MAPA`.
+**Work directly in the mapa folder.** Do NOT create a new project elsewhere, do NOT scaffold a new Remotion app — `edicao/` and `edicao_remotion/` already exist. All paths are relative to `C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\Edit.AI by Galvão\MAPA`.
 
 The only mandatory interaction before Phase 0 is Phase -1 (animations/subtitles). After that, run end-to-end autonomously: no questions mid-run, no approval stops. Log every judgment call in `data/decisions_log.md`. You only speak to me: (a) a required input is missing or stale; (b) the yield measurement of Phase 5.1; (c) when YouTube starts blocking downloads; (d) when the final render starts (so I close Chrome); (e) delivery.
 

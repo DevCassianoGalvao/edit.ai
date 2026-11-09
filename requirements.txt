@@ -1,4 +1,4 @@
-# Dark Empire Videos — bibliotecas Python (versões do PC original em 07/10/2026)
+# Edit.AI by Galvão — bibliotecas Python (versões do PC original em 07/10/2026)
 requests>=2.32
 pillow>=11
 numpy>=2.0

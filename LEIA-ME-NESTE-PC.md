@@ -13,7 +13,7 @@ Esta pasta contém a cópia do pacote completo fornecido pelo proprietário. A p
 
 O Short 3D foi retirado das novas produções; pedidos antigos continuam preservados. A geração de voz, certas buscas e outras integrações dependem de contas e chaves próprias; a cópia não contém credenciais do pacote original. A existência de uma chave ou CLI não garante que o serviço, o login ou as cotas estejam válidos.
 
-O pacote original contém uma configuração de licença voltada à venda. Nesta cópia para o autor, usa-se o modo do proprietário já previsto em `licenca.py`; a configuração de venda foi preservada como exemplo, sem ativá-la. `LEIA-ME_INSTALACAO.md` e `instalar.py` são os documentos originais e apontam para a estrutura antiga; para esta cópia, siga este arquivo.
+Esta instalação usa o modo do proprietário. O antigo instalador de venda foi separado dos arquivos ativos; use este guia e o instalador de dependências desta cópia.
 
 ## Verificações realizadas
 

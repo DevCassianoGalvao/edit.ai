@@ -133,7 +133,7 @@ def adaptador(mapa):
     mem = str(memoria_dir(mapa)).replace("\\", "/")
     ag = str(Path(mapa) / ".claude" / "agents").replace("\\", "/")
     bash = bash_exe().replace("\\", "/")
-    return f"""[ADAPTADOR CODEX — Dark Empire Videos]
+    return f"""[ADAPTADOR CODEX — Edit.AI by Galvão]
 As instruções abaixo foram escritas para o Claude Code; você é o Codex fazendo o MESMO trabalho, sozinho, sem ninguém
 no chat. Traduza assim:
 - MEMÓRIA: "a sua memória" / MEMORY.md = `{mem}/MEMORY.md` e os arquivos .md citados nele (mesma pasta). Leia o

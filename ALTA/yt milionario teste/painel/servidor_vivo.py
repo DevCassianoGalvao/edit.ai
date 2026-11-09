@@ -11,7 +11,7 @@ try:
 except OSError:
     pass
 log = open(HERE / "servidor_console.log", "a", encoding="utf-8")
-subprocess.Popen([sys.executable, "-u", str(HERE / "servidor.py")], cwd=str(HERE.parent), stdout=log,
+subprocess.Popen([sys.executable, "-u", str(HERE / "servidor.py"), "--sem-navegador"], cwd=str(HERE.parent), stdout=log,
                  stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
                  creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
 print("servidor do painel religado")

@@ -1,4 +1,4 @@
-CHAVES DO DARK EMPIRE VIDEOS — este pacote NÃO leva nenhuma chave (de propósito). Coloque as SUAS:
+CHAVES DO EDIT.AI BY GALVÃO — este pacote NÃO leva nenhuma chave (de propósito). Coloque as SUAS:
 
 Pasta desta ferramenta (CLAUDE CODE ALTA PRODUÇÃO\chaves\):
   darkplanner.txt   chave da API de locução (DarkPlanner). Sem ela os funcionários não geram a voz.

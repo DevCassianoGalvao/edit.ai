@@ -7,7 +7,8 @@ PANEL=PROJECT/'painel'
 sys.path.insert(0,str(ROOT/'.appdeps'))
 import webview
 flags=getattr(subprocess,'CREATE_NO_WINDOW',0)
-subprocess.run([sys.executable,str(PANEL/'servidor_vivo.py')],cwd=str(PROJECT),check=True,creationflags=flags)
+python_console = str(Path(sys.executable).with_name('python.exe')) if Path(sys.executable).name.lower() == 'pythonw.exe' else sys.executable
+subprocess.run([python_console,str(PANEL/'servidor_vivo.py')],cwd=str(PROJECT),check=True,creationflags=flags)
 for _ in range(50):
     try:
         with urllib.request.urlopen('http://127.0.0.1:8876/api/editai',timeout=2) as r:
@@ -15,7 +16,7 @@ for _ in range(50):
     except Exception:time.sleep(.2)
 else:raise RuntimeError('O painel local não respondeu na porta 8876.')
 if not (PANEL/'.parar_gerente').exists():
-    check=subprocess.run([sys.executable,str(PANEL/'gerente_vivo.py')],cwd=str(PROJECT),creationflags=flags)
+    check=subprocess.run([python_console,str(PANEL/'gerente_vivo.py')],cwd=str(PROJECT),creationflags=flags)
     if check.returncode:subprocess.Popen(['wscript.exe',str(PANEL/'gerente_escondido.vbs')],cwd=str(PROJECT),creationflags=flags)
 webview.settings['ALLOW_DOWNLOADS']=True
 webview.settings['OPEN_EXTERNAL_LINKS_IN_BROWSER']=True

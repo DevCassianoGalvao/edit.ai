@@ -124,7 +124,7 @@ def estado():
     if d.get("email") and not d.get("negado"):
         _renova_bg(d["email"])          # passe vencido (PC ficou offline): tenta renovar sozinho
     return {**base, "ativa": False, "precisa_ativar": True,
-            "motivo": d.get("negado") or ("Ative o Dark Empire Videos com o e-mail usado na compra." if not d.get("email")
+            "motivo": d.get("negado") or ("Ative o Edit.AI by Galvão com o e-mail usado na compra." if not d.get("email")
                                           else "A licença precisa ser renovada: conecte à internet ou ative de novo.")}
 
 

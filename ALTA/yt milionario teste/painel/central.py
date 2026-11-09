@@ -141,7 +141,7 @@ def gerente_saude():
 def tarefa_agendada():
     def ler():
         out = {}
-        for nome in ("DarkEmpireCompleto Gerente", "DarkEmpireCompleto Painel"):
+        for nome in ("Edit.AI by Galvão Gerente", "Edit.AI by Galvão Painel"):
             r = subprocess.run(["schtasks", "/query", "/tn", nome], capture_output=True, text=True, creationflags=NOWIN)
             out[nome] = r.returncode == 0
         return out
@@ -401,7 +401,7 @@ def vigia_loop():
             g = gerente_saude()
             caido = caido + 1 if (g["ligado"] and not g["vivo"] and not g["parado_de_vez"]) else 0
             if caido >= 2:
-                ok = roda_tarefa("DarkEmpireCompleto Gerente")
+                ok = roda_tarefa("Edit.AI by Galvão Gerente")
                 print(f"[central] gerente caído — religado pela tarefa ({'ok' if ok else 'falhou'})", flush=True)
                 avisar("Edit.AI by Galvão — gerente religado", "o gerente tinha caído; a Central religou sozinha e os diretores retomam de onde pararam", 3)
                 caido = 0
@@ -493,7 +493,7 @@ def agenda_render(aid, arg):
     gerente morria junto quando eles caíam (o render da b2 iniciado pela Central sobreviveu à queda das 20:12; o do
     Diretor, não). Mesmo truque do _agenda.ps1 dos Diretores."""
     baia = Path(arg.split("|")[0].replace("/", "\\"))
-    nome = "DarkEmpireCompleto_render_" + (baia.name if baia.name.startswith("b") else "b1")
+    nome = "Edit.AI by Galvão_render_" + (baia.name if baia.name.startswith("b") else "b1")
     bat = baia / f"_render_{nome}.bat"
     log = baia / "data" / "_render_tarefa.log"
     bat.write_bytes(("@echo off\r\nchcp 65001 >nul\r\n"
@@ -574,8 +574,8 @@ def liga_gerente(aid):
     (HERE / ".parar_gerente").unlink(missing_ok=True)
     time.sleep(1)
     if not gerente_saude()["vivo"]:
-        if roda_tarefa("DarkEmpireCompleto Gerente"):
-            log_acao(aid, "gerente religado pela tarefa 'DarkEmpireCompleto Gerente' do Agendador")
+        if roda_tarefa("Edit.AI by Galvão Gerente"):
+            log_acao(aid, "gerente religado pela tarefa 'Edit.AI by Galvão Gerente' do Agendador")
         else:
             subprocess.Popen(["wscript.exe", str(HERE / "gerente_escondido.vbs")], cwd=str(PRINCIPAL), creationflags=DETACH)
             log_acao(aid, "tarefa do Agendador não existe — gerente religado pelo gerente_escondido.vbs")
@@ -819,7 +819,7 @@ def a_funcionarios(aid, ligado=True, **_):
 
 
 def atalho_inicio():
-    return Path(os.environ.get("APPDATA", "")) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup" / "Dark Empire Completo.lnk"
+    return Path(os.environ.get("APPDATA", "")) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup" / "Edit.AI by Galvão.lnk"
 
 
 def autostart_ligado():
@@ -901,9 +901,9 @@ def a_remoto(aid, ligado=True, **_):
 
 
 def reinicia_servidor():
-    # 17/10/2026: o servidor novo nasce pela tarefa "DarkEmpireCompleto Painel" (fora da árvore de processos de quem pediu)
+    # 17/10/2026: o servidor novo nasce pela tarefa "Edit.AI by Galvão Painel" (fora da árvore de processos de quem pediu)
     cod = ("import time,subprocess,sys;time.sleep(3);"
-           "r=subprocess.run(['schtasks','/run','/tn','DarkEmpireCompleto Painel'],capture_output=True);"
+           "r=subprocess.run(['schtasks','/run','/tn','Edit.AI by Galvão Painel'],capture_output=True);"
            f"r.returncode==0 or subprocess.Popen([sys.executable,'-u',r'{HERE / 'servidor.py'}','--sem-navegador'],cwd=r'{PRINCIPAL}',"
            f"stdout=open(r'{HERE / 'servidor_console.log'}','a'),stderr=subprocess.STDOUT,creationflags={DETACH})")
     subprocess.Popen([PY, "-c", cod], creationflags=DETACH, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

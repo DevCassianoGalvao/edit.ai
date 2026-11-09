@@ -23,7 +23,7 @@ RESPOSTAS JÁ DADAS — NÃO PARE PARA PERGUNTAR
   da pasta mapa ou que custe dinheiro.
 
 PASTAS
-Tudo acontece na pasta mapa (C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\DarkEmpireCompleto\MAPA): roteiro.txt,
+Tudo acontece na pasta mapa (C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\Edit.AI by Galvão\MAPA): roteiro.txt,
 audio.mp3 e legenda.srt novos já estão nela. ANTES DE COMEÇAR, mande para a
 Lixeira (não apague direto — o PC tem pouco espaço, eu esvazio) o material do
 filme anterior:

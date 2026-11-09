@@ -640,7 +640,7 @@ main{min-height:0;position:relative}
 .pa-res .tr{color:var(--ink2);font-size:12.5px}
 .pa-res .fo{font:11.5px var(--mono);color:var(--mute)}
 </style>
-<link rel="icon" type="image/svg+xml" href="/app/editai.svg"><link rel="stylesheet" href="/app/space-grotesk.css"><link rel="stylesheet" href="/app/editai.css?v=8">
+<link rel="icon" type="image/svg+xml" href="/app/editai.svg"><link rel="stylesheet" href="/app/space-grotesk.css"><link rel="stylesheet" href="/app/editai.css?v=9">
 </head>
 <body class="page-workbench">
 <div class="app">
@@ -1752,6 +1752,28 @@ function abreZoom(f){
 function htmlGuia(g){
   const N = S.N;
   let cards;
+  if (g.id === "som"){
+    const i = PASSOS().findIndex(x => x.id === g.id);
+    const descriptions = {
+      music: "Adiciona uma trilha da Biblioteca de Áudio do YouTube. A música abaixa durante a narração.",
+      trilha_baixa: "Deixa a trilha mais discreta sob a narração. Para ter efeito, ative também a trilha.",
+      sfx: "Adiciona efeitos sonoros e ambiências para reforçar momentos do filme.",
+      voz: "Aplica limpeza à narração para reduzir ruído e sibilância."
+    };
+    const kinds = {music: "TRILHA", trilha_baixa: "VOLUME", sfx: "EFEITOS", voz: "NARRAÇÃO"};
+    return `<div class="eb">passo ${i + 1}</div><h2 class="sound-title">Som</h2>
+      <p class="sound-intro">Escolha como o filme vai soar. Ouça as prévias e ative as opções que quiser.</p>
+      <div class="sound-note"><span aria-hidden="true">♪</span><p><b>Sobre as fontes</b><br>Trilhas da Biblioteca de Áudio do YouTube Studio e efeitos CC0.</p></div>
+      <div class="sound-grid">${g.opcoes.map(o => {
+        const on = !!N.liga[o.id], hasAudio = !!o.previa && o.previa.endsWith('.mp3');
+        return `<article class="sound-card ${on ? 'is-on' : ''}">
+          <div class="sound-kind">${esc(kinds[o.id] || 'ÁUDIO')}</div><h3>${esc(o.nome)}</h3>
+          <p class="sound-desc">${esc(descriptions[o.id] || o.desc)}</p>
+          <div class="sound-preview">${hasAudio ? `<div class="sound-preview-label">PRÉVIA DE ÁUDIO</div><audio controls preload="metadata" aria-label="Ouvir prévia: ${esc(o.nome)}" src="${pv(o.previa)}"></audio>` : `<div class="sound-no-preview"><span aria-hidden="true">≋</span><div><b>Ajuste de volume</b><small>Não possui prévia separada</small></div></div>`}</div>
+          <button type="button" class="sound-toggle" data-liga="${esc(o.id)}" aria-pressed="${on}"><span>${on ? 'Ativado' : 'Desativado'}</span><span class="sw" aria-hidden="true"></span></button>
+        </article>`;
+      }).join('')}</div>`;
+  }
   if (g.id === "render" || g.id === "ritmo"){
     const rot = g.id === "ritmo" ? ["presença", "energia"] : ["qualidade", "velocidade"];
     cards = g.opcoes.map(o => `<button class="op ${N.escolhas[g.id] === o.id ? "on" : ""}" data-g="${g.id}" data-o="${o.id}"><span class="ck">✓</span>
@@ -1838,6 +1860,7 @@ function wireNovo(p){
     const v = !ops.every(o => N.liga[o.id]); ops.forEach(o => { N.liga[o.id] = v; }); N.estiloMod = true; renderNovo();
   });
   $$("#wMain [data-som]").forEach(s => s.onclick = e => { e.stopPropagation(); tocar(s.dataset.som, s); });
+  $$("#wMain .sound-preview audio").forEach(a => a.addEventListener("play", () => { $$("#wMain .sound-preview audio").forEach(other => { if (other !== a) other.pause(); }); }));
   $$("#wMain [data-zoom]").forEach(s => s.onclick = e => { e.stopPropagation(); abreZoom(s.dataset.zoom); });
   $$("#wMain .op video").forEach(v => {
     const op = v.closest(".op");

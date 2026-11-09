@@ -26,8 +26,8 @@ ROOT = Path(__file__).resolve().parent.parent
 D = ROOT / "data"
 FX = ROOT / "assets" / "fx"
 FPS = 30
-TRANSICOES = ["seco", "punch", "flash", "whip", "glitch", "queima", "luz", "fusao"]
-TEXTURAS = ["poeira", "vhs", "papel", "luz_vazada"]
+TRANSICOES = ["seco", "punch", "flash", "whip", "glitch", "queima", "luz", "fusao", "flash_suave"]
+TEXTURAS = ["poeira", "vhs", "papel", "luz_vazada", "grao_fino"]
 
 
 def _ff(*a):
@@ -93,6 +93,8 @@ def _janelas(ts, antes, depois):
 
 def flash_brilho(tipo, ts):
     """Termos para somar no eq=brightness do acabamento (o flash é só brilho)."""
+    if tipo == "flash_suave":
+        return [f"0.20*max(0\\,1-abs(t-{t:.3f})/0.12)" for t in ts]
     if tipo == "fusao":   # 04/11/2026 estilo Arquivo Colorizado: a imagem respira para o escuro e volta (~0,6 s)
         return [f"-0.30*max(0\\,1-abs(t-{t:.3f})/0.30)" for t in ts]
     return [f"0.55*max(0\\,1-abs(t-{t:.3f})/0.09)" for t in ts] if tipo == "flash" else []
@@ -158,6 +160,10 @@ def grafo(base, tipo, ts, texturas, final, fundos):
                       f"[{o}a][{o}b]blend=all_mode=screen:all_opacity={op}:shortest=1:enable='{_janelas(ts, antes, depois)}'[{o}]")
         cur = o
     tx = texturas or {}
+    if tx.get("grao_fino"):
+        o = nxt()
+        partes.append(f"[{cur}]noise=alls=3:allf=t[{o}]")
+        cur = o
     if tx.get("vhs"):
         sl = entrada(["-loop", "1", "-framerate", str(FPS), "-i", "assets/fx/scanlines.png"])
         o = nxt()

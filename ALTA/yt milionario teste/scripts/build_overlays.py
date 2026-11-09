@@ -71,7 +71,7 @@ GENERO = ("planta", "caderno", "mercado", "radar", "vhs",
           "estratigrafia", "papiro", "etiquetamuseu", "datacaocarbono", "escaneamento3d", "quadriculaescavacao",  # arqueologia
           "cupomfiscal", "rankingbarras", "rosca", "pilhadinheiro", "contratocarimbo",                  # economia
           "dossiesecreto", "sonar", "comparaforcas", "periscopio", "placaidentificacao",                # militar
-          "tvtubo", "anunciorevista", "polaroids", "evolucaomarca", "etiquetapreco", "editai_ficha", "editai_linha")                   # nostalgia
+          "tvtubo", "anunciorevista", "polaroids", "evolucaomarca", "etiquetapreco", "editai_ficha", "editai_linha", "editai_editorial")                   # nostalgia
 # 04/10/2026 (2ª regra do usuário: "quero que o estilo apareça mais vezes para ficar mais dinâmico"):
 # o estilo ligado volta 1 vez a cada GENERO_A_CADA min, ESPALHADO pelo filme (nenhum buraco maior que o dobro do
 # intervalo); com 2+ estilos ligados a cota se divide entre eles (cada um >= 3). Os estilos de gênero saem do teto de

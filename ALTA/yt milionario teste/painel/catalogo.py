@@ -36,6 +36,8 @@ GUIAS = [
      ]},
     {"id": "cor", "titulo": "Cor", "sub": "A grade de cor aplicada no filme inteiro — vídeo, foto, cartões e animações iguais.",
      "tipo": "escolha", "opcoes": [
+        {"id":"editorial", "nome":"Editorial claro", "desc":"Contraste suave e cores moderadas para vídeos explicativos.", "previa":"cor_editorial.jpg", "config":{"acabamento":{"tom":"editorial"}}},
+        {"id":"dourado", "nome":"Documentário dourado", "desc":"Tons quentes discretos para história e natureza.", "previa":"cor_dourado.jpg", "config":{"acabamento":{"tom":"dourado"}}},
         {"id":"editai_noite", "nome":"Noite violeta", "desc":"Sombras azuladas e meios-tons violetas para documentários.", "previa":"cor_editai_noite.jpg", "config":{"acabamento":{"tom":"editai_noite"}}},
         {"id":"editai_oceano", "nome":"Oceano turquesa", "desc":"Azul e verde suaves para natureza, ciência e tecnologia.", "previa":"cor_editai_oceano.jpg", "config":{"acabamento":{"tom":"editai_oceano"}}},
         {"id": "neutro", "nome": "Neutro", "desc": "Contraste leve, cor natural um pouco contida.", "previa": "cor_neutro.jpg",
@@ -53,6 +55,8 @@ GUIAS = [
      ]},
     {"id": "textura", "titulo": "Textura de filme", "sub": "Grão, vinheta e a tremulação leve de projetor. Passe o mouse para ver em movimento.",
      "tipo": "escolha", "opcoes": [
+        {"id":"pelicula_moderna", "nome":"Película moderna", "desc":"Grão médio e vinheta suave, sem tremor.", "previa":"tex_pelicula_moderna.mp4", "config":{"acabamento":{"grao":6,"vinheta":"PI/8","tremor":False}}},
+        {"id":"projetor_sutil", "nome":"Projetor sutil", "desc":"Grão discreto com tremulação leve e sem vinheta.", "previa":"tex_projetor_sutil.mp4", "config":{"acabamento":{"grao":2,"vinheta":"off","tremor":True}}},
         {"id":"documental", "nome":"Documental suave", "desc":"Grão discreto com vinheta leve, sem tremor.", "previa":"tex_leve.mp4", "config":{"acabamento":{"grao":2,"vinheta":"PI/8","tremor":False}}},
         {"id": "limpo", "nome": "Limpo", "desc": "Digital, sem grão nem vinheta.", "previa": "tex_limpo.mp4",
          "config": {"acabamento": {"grao": 0, "vinheta": "off", "tremor": False}}},
@@ -74,8 +78,9 @@ GUIAS = [
         {"id": "voz", "nome": "Voz limpa", "desc": "Tira chiado e o sibilo do “s” da narração antes de tudo. Ouça: 6 s crus, depois os mesmos 6 s limpos.",
          "previa": "som_voz.mp3", "config_on": {"voz_limpa": True}, "config_off": {"voz_limpa": False}},
      ]},
-    {"id": "cartoes", "titulo": "Cartões na tela", "sub": "O que entra por cima das imagens. Passe o mouse para ver em movimento.",
+    {"id": "cartoes", "titulo": "Cartões na tela", "sub": "Você pode ativar vários estilos. O Diretor decide onde usá-los; no modo enxuto há limite de cartões e nem todos são garantidos. Passe o mouse para ver em movimento.",
      "tipo": "liga", "opcoes": [
+        {"id":"editai_editorial", "nome":"Editorial explicativo", "desc":"Cartão autoral inspirado em vídeos explicativos, com título, texto e fonte.", "previa":"editai_editorial.png", "config_on":{"cartoes_genero":{"editai_editorial":True}}, "config_off":{"cartoes_genero":{"editai_editorial":False}}},
         {"id":"editai_ficha", "nome":"Edit.AI · Dado em destaque", "desc":"Cartão roxo para números, contexto e fonte.", "previa":"editai_ficha.png", "config_on":{"cartoes_genero":{"editai_ficha":True}}, "config_off":{"cartoes_genero":{"editai_ficha":False}}},
         {"id":"editai_linha", "nome":"Edit.AI · Linha do tempo", "desc":"Até quatro marcos em uma cronologia animada.", "previa":"editai_linha.png", "config_on":{"cartoes_genero":{"editai_linha":True}}, "config_off":{"cartoes_genero":{"editai_linha":False}}},
         {"id": "arquivo_dark", "nome": "Família arquivo dark", "desc": "Quadro de provas, checklist, ficha, manchete, lupa, rolo, revela.",
@@ -157,6 +162,7 @@ GUIAS = [
      ]},
     {"id": "destaque", "titulo": "Destaques de nome e número", "sub": "Quando a narração cita lugar, data, nome ou número.",
      "tipo": "escolha", "opcoes": [
+        {"id":"editorial", "nome":"Editorial explicativo", "desc":"Tarja clara com detalhe dourado para nomes, lugares e dados.", "previa":"dest_editorial.png", "config":{"estilo_destaque":"editorial"}},
         {"id": "documentario", "nome": "Documentário", "desc": "Versalete branco, fio fino, sem caixa. Sóbrio, tipo HISTORY.",
          "previa": "dest_documentario.png", "config": {"estilo_destaque": "documentario"}},
         {"id": "dinamico", "nome": "Dinâmico", "desc": "Barra de cor entrando da esquerda, caixa alta. Mais pop.",
@@ -166,6 +172,7 @@ GUIAS = [
      ]},
     {"id": "transicao", "titulo": "Respiro e enquadramento", "sub": "Pausa entre capítulos, formato da tela e definição da imagem.",
      "tipo": "liga", "opcoes": [
+        {"id":"barras_sutis", "nome":"Barras discretas", "desc":"Faixas pretas finas. Se barras de cinema também estiverem ligadas, prevalecem as maiores.", "previa":"tr_barras_sutis.jpg", "config_on":{"acabamento":{"barras_sutis":True}}, "config_off":{"acabamento":{"barras_sutis":False}}},
         {"id": "mergulho", "nome": "Mergulho no preto", "desc": "Meio segundo de preto em cada troca de capítulo — respiro.",
          "previa": "tr_mergulho.mp4", "config_on": {"acabamento": {"mergulho_capitulo": True}},
          "config_off": {"acabamento": {"mergulho_capitulo": False}}},
@@ -176,6 +183,7 @@ GUIAS = [
      ]},
     {"id": "transicoes", "titulo": "Transições nos cortes", "sub": "O que acontece na troca de uma imagem para a outra. Passe o mouse para ver o corte acontecendo.",
      "tipo": "escolha", "opcoes": [
+        {"id":"flash_suave", "nome":"Flash suave", "desc":"Clarão curto e discreto para marcar uma virada.", "previa":"trc_flash_suave.mp4", "config":{"transicao":{"tipo":"flash_suave"}}},
         {"id": "seco", "nome": "Corte seco", "desc": "A troca direta, sem efeito. Clássico de documentário.", "previa": "trc_seco.mp4",
          "config": {"transicao": {"tipo": "seco"}}},
         {"id": "punch", "nome": "Punch-in", "desc": "Zoom seco de 6 % logo depois do corte. Micro-movimento que prende o olho.",
@@ -204,6 +212,7 @@ GUIAS = [
      ]},
     {"id": "texturas", "titulo": "Texturas por cima", "sub": "Camadas sobre o filme inteiro. Passe o mouse para ver em movimento.",
      "tipo": "liga", "opcoes": [
+        {"id":"grao_fino", "nome":"Grão fino contínuo", "desc":"Textura leve sobre a imagem inteira; pode ser combinada com outras camadas.", "previa":"tex_grao_fino.mp4", "config_on":{"texturas":{"grao_fino":True}}, "config_off":{"texturas":{"grao_fino":False}}},
         {"id": "poeira", "nome": "Poeira e riscos", "desc": "Pontos e riscos verticais de película velha.", "previa": "txt_poeira.mp4",
          "config_on": {"texturas": {"poeira": True}}, "config_off": {"texturas": {"poeira": False}}},
         {"id": "vhs", "nome": "VHS", "desc": "Linhas de varredura, cor desalinhada e chiado de fita.", "previa": "txt_vhs.mp4",
@@ -302,6 +311,7 @@ PRONTOS = [
 
 # Novas combinações de componentes já suportados pelo render.
 for _id, _nome, _desc, _base, _choices, _switches in [
+    ("editorial-explicativo", "Editorial explicativo", "Visual claro inspirado em documentários explicativos, com cartão editorial e flash suave.", "explicativo", {"legendas":"off", "cor":"editorial", "textura":"documental", "destaque":"editorial", "transicoes":"flash_suave", "ritmo":"capitulos"}, {"editai_editorial":True}),
     ("noir-informativo", "Noir informativo", "Tons frios, cartões de arquivo e legendas discretas.", "true-crime", {"legendas":"minimal", "transicoes":"fusao"}, {"mapa":True}),
     ("engenharia-limpa", "Engenharia limpa", "Visual técnico com legendas em caixa e diagramas de peças.", "carros", {"legendas":"caixa", "cor":"neutro"}, {"planta":True,"paralaxe":True}),
     ("historia-sepia", "História em sépia", "Arquivo em sépia, legendas serifadas e documentação visual.", "retro", {"legendas":"serifa","textura":"arquivo"}, {"caderno":True,"mapa":True}),
@@ -320,7 +330,7 @@ def mescla(a, b):
 
 def config_de(escolhas, liga):
     """{"legendas": "karaoke", ...} + {"music": True, ...} -> pedaço do pipeline_config."""
-    cfg = {}
+    cfg = {"acabamento": {"desligado": False, "leve": False}} if any(k in escolhas for k in ("cor", "textura", "transicoes")) or any(liga.get(k) for k in ("mergulho", "barras", "barras_sutis", "nitidez", "poeira", "vhs", "papel", "luz_vazada", "grao_fino")) else {}
     for g in GUIAS:
         for o in g["opcoes"]:
             if g["tipo"] == "escolha" and escolhas.get(g["id"]) == o["id"]:

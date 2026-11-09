@@ -13,7 +13,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { colors, displayFont, textFont } from "../design/tokens";
 import config from "../../data/pipeline_config.json";
 
-export type Estilo = "documentario" | "dinamico" | "tecnico";
+export type Estilo = "documentario" | "dinamico" | "tecnico" | "editorial";
 export const ESTILO: Estilo = ((config as { estilo_destaque?: Estilo }).estilo_destaque || "documentario");
 // contexto só para a PRÉVIA (src/overlays/DemoDestaques.tsx) mostrar os três estilos no mesmo bundle;
 // no filme ninguém provê o contexto e vale o estilo do pipeline_config.
@@ -55,6 +55,13 @@ export const Destaque: React.FC<{
   const acento = cor || colors.accent;
   const dir = canto.endsWith("dir");
   const est = useEstilo();
+  if (est === "editorial") {
+    const v = vida(frame, entra, fica, dir ? 18 : -18, 0);
+    return <AbsoluteFill style={{pointerEvents:"none"}}><div style={{position:"absolute",...lugar(canto),...v,maxWidth:1200,background:"#f5f0df",color:"#242126",padding:"20px 28px",borderLeft:"10px solid #e5b83c",boxShadow:"0 6px 30px #0006"}}>
+      {sub && <div style={{fontFamily:textFont,fontSize:22,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"#775900",marginBottom:8}}>{sub}</div>}
+      <div style={{fontFamily:displayFont,fontSize:58,fontWeight:700,lineHeight:1.05}}>{titulo}</div>
+    </div></AbsoluteFill>;
+  }
   if (est === "dinamico") {
     const v = vida(frame, entra, fica, dir ? 40 : -40, 0);
     const w = interpolate(frame, [entra, entra + 14], [0, 1], clamp);
@@ -132,6 +139,8 @@ export const NumeroSobreposto: React.FC<{
   const v = vida(frame, entra, fica, 0, 14);
   const dir = canto.endsWith("dir");
   const escala = interpolate(frame, [entra, entra + 12], [0.88, 1], clamp);
+  const est = useEstilo();
+  if (est === "editorial") return <AbsoluteFill style={{pointerEvents:"none"}}><div style={{position:"absolute",...lugar(canto),...v,background:"#f5f0df",color:"#242126",padding:"20px 28px",borderLeft:"10px solid #e5b83c",boxShadow:"0 6px 30px #0006"}}><div style={{fontFamily:displayFont,fontSize:96,fontWeight:800,lineHeight:1}}>{valor}</div>{rotulo && <div style={{fontFamily:textFont,fontSize:24,marginTop:10,fontWeight:700}}>{rotulo}</div>}</div></AbsoluteFill>;
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
       <div style={{ position: "absolute", ...lugar(canto), ...v }}>

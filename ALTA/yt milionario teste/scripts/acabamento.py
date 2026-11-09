@@ -48,6 +48,8 @@ def enc(qualidade="alta"):
 TONS = {
     "editai_noite": "eq=contrast=1.12:saturation=0.85,colorbalance=rs=-0.04:gs=0.01:bs=0.08:rm=0.04:bm=0.06",
     "editai_oceano": "eq=contrast=1.08:saturation=0.82,colorbalance=rs=-0.08:gs=0.04:bs=0.08:rh=-0.02:gh=0.03:bh=0.03",
+    "editorial": "eq=contrast=1.06:saturation=0.78:brightness=0.02",
+    "dourado": "eq=contrast=1.09:saturation=0.82,colorbalance=rs=0.04:bs=-0.04:rm=0.06:gm=0.02:bm=-0.04",
     "neutro": "eq=contrast=1.05:saturation=0.9",
     "sepia": "colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131,eq=contrast=1.06",
     "pb": "hue=s=0,eq=contrast=1.12",
@@ -167,6 +169,8 @@ def partes(a, legendas_ass=None, caps=(), extra_brilho=(), desloc=0.0, gpu=False
             f.append(f"eq=brightness='{'+'.join(br)}':eval=frame")
         if a.get("barras"):
             g.append(f"drawbox=x=0:y=0:w=iw:h={BARRA}:color=black:t=fill,drawbox=x=0:y=ih-{BARRA}:w=iw:h={BARRA}:color=black:t=fill")
+        elif a.get("barras_sutis"):
+            g.append("drawbox=x=0:y=0:w=iw:h=48:color=black:t=fill,drawbox=x=0:y=ih-48:w=iw:h=48:color=black:t=fill")
     if legendas_ass:   # no pedaço, a legenda lê o tempo do filme (desloca e volta)
         g.append((f"setpts=PTS+{desloc:.3f}/TB," if desloc else "") + f"ass={legendas_ass}:fontsdir=public/fonts"
                  + (",setpts=PTS-STARTPTS" if desloc else ""))
@@ -196,7 +200,7 @@ def comando(entradas, a, legendas_ass=None, caps=(), transicao=None, texturas=No
     fx.DESLOC = desloc
     b, g = partes(a, legendas_ass, caps if a.get("mergulho_capitulo") else (), fx.flash_brilho(tipo, ts), desloc, gpu=gpu)
     hw = HW if gpu else []
-    if tipo in ("seco", "flash") and not tx:
+    if tipo in ("seco", "flash", "flash_suave") and not tx:
         return [*hw, *entradas, "-vf", f"{b},{g}"], ts
     extras = []
     graph, out = fx.grafo(b, tipo, ts, tx, g, extras)

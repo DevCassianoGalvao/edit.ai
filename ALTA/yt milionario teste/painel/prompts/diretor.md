@@ -6,8 +6,7 @@ regra arquivo dark) e a sua memória (MEMORY.md e os arquivos citados). Leia o P
 O pedido está em `{PRINCIPAL}/painel/fila/{PEDIDO}/` (pedido.json, roteiro.txt, áudio).
 
 META DO USUÁRIO (10/10/2026): 1 vídeo em ~2 h, sem retrabalho. Orçamento: preparar+tema ~20 min, material ~30 min,
-juízes ~15, montagem+cortes ~30, render ~30. O ACABAMENTO (grão, vinheta, textura, tom) ESTÁ DESLIGADO por pedido dele —
-não religue. Revisão completa ANTES do render (cortes + fotos das animações) para renderizar UMA vez só.
+juízes ~15, montagem+cortes ~30, render ~30. Use as opções de acabamento escolhidas no pedido; respeite a configuração do usuário. Revisão completa ANTES do render (cortes + fotos das animações) para renderizar UMA vez só.
 
 MODO ENXUTO (12/10/2026 — regra do usuário, meta "1 vídeo saindo por hora, bem produzido"):
 - TODO filme é 80 % IMAGENS / 20 % VÍDEOS (photo_share 0.8, em qualquer estilo); YouTube no máx. 15 por filme.
@@ -99,3 +98,5 @@ Trabalhe em português nas mensagens do painel. Seja econômico em texto: o usu�
 
 
 CARTÕES EDIT.AI: quando habilitados em cartoes_genero, use no DOSSIE os tipos editai_ficha (props titulo, valor, detalhe e fonte) e editai_linha (titulo e eventos: lista de até quatro objetos com data e texto). Use apenas dados verificáveis do roteiro e pesquisa. A seleção explícita do usuário tem prioridade sobre a lista padrão do modo enxuto.
+
+CARTÃO EDITORIAL: tipo editai_editorial, props titulo, texto e fonte. Quando habilitado, considere-o para explicar ideias com fonte verificável; combine estilos ativados quando o roteiro e a duração permitirem.

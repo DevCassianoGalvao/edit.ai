@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escritório · Sala de Montagem</title>
+<style>
+:root{
+  --chao:#d9cbb4; --chao2:#cfbfa6; --parede:#efe6d6; --rodape:#8a7a63; --mesa:#a77b4f; --mesa2:#8c6440;
+  --tela:#1d2733; --tela-on:#3fb6ff; --tinta:#2a2520; --tinta2:#6d6457; --papel:#fffaf1; --sombra:rgba(0,0,0,.18);
+  --ok:#2e9d5b; --espera:#d99a1e; --trava:#d64541; --livre:#8c8478; --vidro:rgba(150,200,230,.22); --borda:#bfae94;
+  --painel:#fffdf8; --acento:#c0392b;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --chao:#2b2620; --chao2:#26221d; --parede:#3a332b; --rodape:#1e1a16; --mesa:#6e4f33; --mesa2:#573d27;
+  --tela:#0d1218; --tinta:#efe7da; --tinta2:#b3a897; --papel:#2f2a24; --sombra:rgba(0,0,0,.45);
+  --vidro:rgba(80,140,180,.18); --borda:#4d4438; --painel:#221e1a; }}
+:root[data-theme="dark"]{
+  --chao:#2b2620; --chao2:#26221d; --parede:#3a332b; --rodape:#1e1a16; --mesa:#6e4f33; --mesa2:#573d27;
+  --tela:#0d1218; --tinta:#efe7da; --tinta2:#b3a897; --papel:#2f2a24; --sombra:rgba(0,0,0,.45);
+  --vidro:rgba(80,140,180,.18); --borda:#4d4438; --painel:#221e1a; }
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--parede);color:var(--tinta);font:14px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px;
+  background:var(--painel);border-bottom:2px solid var(--borda)}
+header h1{font-size:18px;margin:0;letter-spacing:.3px}
+header h1 small{font-weight:400;color:var(--tinta2);margin-left:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{padding:5px 10px;border-radius:999px;background:var(--papel);border:1px solid var(--borda);font-size:12.5px;white-space:nowrap}
+.chip b{font-weight:700}
+.chip.ruim{border-color:var(--trava);color:var(--trava)}
+.toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;border-radius:999px;border:2px solid var(--borda);
+  background:var(--papel);font-weight:600;font-size:13px;user-select:none}
+.toggle .sw{width:38px;height:20px;border-radius:20px;background:var(--livre);position:relative;transition:.2s}
+.toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on{border-color:var(--ok)} .toggle.on .sw{background:var(--ok)} .toggle.on .sw::after{left:20px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:0;min-height:calc(100vh - 58px)}
+@media (max-width:980px){.layout{grid-template-columns:1fr}}
+.sala{position:relative;overflow:hidden;padding:16px;
+  background:repeating-linear-gradient(90deg,var(--chao) 0 60px,var(--chao2) 60px 61px),var(--chao)}
+.parede{height:96px;margin:-16px -16px 18px;background:var(--parede);border-bottom:10px solid var(--rodape);
+  display:flex;gap:14px;align-items:flex-end;padding:0 16px 8px;overflow-x:auto}
+.quadro{background:#2f4a3a;color:#eaf3ea;border:6px solid #6b4f33;border-radius:4px;padding:6px 10px;min-width:220px;max-width:360px;
+  font:12px/1.35 "Segoe Print","Comic Sans MS",cursive;height:80px;overflow:hidden}
+.quadro h4{margin:0 0 2px;font-size:12px;text-decoration:underline}
+.quadro div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.porta{margin-left:auto;width:74px;height:86px;background:#7a5634;border:4px solid #5b3f25;border-bottom:none;border-radius:4px 4px 0 0;
+  position:relative;flex:none;color:#fff;font:700 10px system-ui;text-align:center;padding-top:6px}
+.porta::after{content:"";position:absolute;right:8px;top:44px;width:7px;height:7px;border-radius:50%;background:#e6c76a}
+.mesas{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:26px 18px}
+.posto{position:relative;height:250px}
+.cracha{position:absolute;left:0;right:0;bottom:0;text-align:center}
+.cracha .nome{font-weight:700;font-size:14px}
+.cracha .cargo{font-size:11.5px;color:var(--tinta2)}
+.bolha{position:absolute;left:4px;right:4px;top:0;background:var(--papel);border:2px solid var(--borda);border-radius:12px;padding:6px 9px;
+  font-size:12px;min-height:44px;box-shadow:0 3px 0 var(--sombra);z-index:3}
+.bolha::after{content:"";position:absolute;bottom:-9px;left:50%;margin-left:-8px;border:8px solid transparent;border-top-color:var(--borda);border-bottom:0}
+.bolha .filme{display:block;font-size:10.5px;color:var(--tinta2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bolha .txt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.st-trabalhando .bolha{border-color:var(--ok)} .st-trabalhando .bolha::after{border-top-color:var(--ok)}
+.st-esperando .bolha{border-color:var(--espera)} .st-esperando .bolha::after{border-top-color:var(--espera)}
+.st-travado .bolha{border-color:var(--trava);animation:pisca 1s infinite} .st-travado .bolha::after{border-top-color:var(--trava)}
+.st-entregando .bolha{border-color:var(--acento)}
+.st-livre .bolha{opacity:.75}
+@keyframes pisca{50%{box-shadow:0 0 0 4px rgba(214,69,65,.35)}}
+.cena{position:absolute;left:50%;transform:translateX(-50%);bottom:40px;width:170px;height:150px}
+.mesa{position:absolute;bottom:0;left:0;right:0;height:54px;background:var(--mesa);border-radius:6px 6px 2px 2px;
+  box-shadow:inset 0 -10px 0 var(--mesa2),0 6px 0 var(--sombra)}
+.monitor{position:absolute;bottom:52px;left:64px;width:62px;height:44px;background:#222;border-radius:4px;padding:3px;z-index:2}
+.monitor::after{content:"";position:absolute;bottom:-9px;left:26px;width:10px;height:9px;background:#333}
+.monitor .vid{width:100%;height:100%;background:var(--tela);border-radius:2px;overflow:hidden;position:relative}
+.st-trabalhando .vid{background:linear-gradient(var(--tela),#13324a)}
+.st-trabalhando .vid::before{content:"";position:absolute;left:4px;right:4px;top:0;height:200%;
+  background:repeating-linear-gradient(transparent 0 4px,var(--tela-on) 4px 6px,transparent 6px 9px);opacity:.75;animation:rola 2.2s linear infinite}
+.st-travado .vid{background:#4a1515} .st-travado .vid::before{content:"!";position:absolute;inset:0;display:grid;place-items:center;color:#ff6b6b;font:900 22px system-ui}
+@keyframes rola{to{transform:translateY(-50%)}}
+.pessoa{position:absolute;bottom:22px;left:18px;width:56px;height:96px;z-index:1}
+.cabeca{position:absolute;top:0;left:12px;width:32px;height:34px;border-radius:50% 50% 46% 46%;background:var(--pele)}
+.cabelo{position:absolute;top:-3px;left:10px;width:36px;height:18px;border-radius:18px 18px 6px 6px;background:var(--cabelo)}
+.olho{position:absolute;top:15px;width:4px;height:4px;border-radius:50%;background:#222}
+.olho.e{left:20px} .olho.d{left:32px}
+.corpo{position:absolute;top:32px;left:6px;width:44px;height:50px;border-radius:14px 14px 6px 6px;background:var(--roupa)}
+.braco{position:absolute;top:40px;width:12px;height:36px;border-radius:6px;background:var(--roupa);transform-origin:top center}
+.braco.e{left:2px;transform:rotate(-28deg)} .braco.d{left:42px;transform:rotate(-58deg)}
+.mao{position:absolute;bottom:-4px;left:1px;width:10px;height:10px;border-radius:50%;background:var(--pele)}
+.st-trabalhando .braco.d{animation:digita .28s infinite alternate}
+.st-trabalhando .braco.e{animation:digita2 .32s infinite alternate}
+@keyframes digita{from{transform:rotate(-62deg)}to{transform:rotate(-50deg)}}
+@keyframes digita2{from{transform:rotate(-34deg)}to{transform:rotate(-22deg)}}
+.st-travado .braco.d{transform:rotate(170deg);top:30px;animation:acena 1s infinite alternate}
+@keyframes acena{to{transform:rotate(150deg)}}
+.cafe{display:none;position:absolute;width:12px;height:13px;background:#fff;border:2px solid #9b8b77;border-radius:0 0 4px 4px;left:44px;top:52px;z-index:2}
+.cafe::before{content:"";position:absolute;left:2px;top:-12px;width:2px;height:9px;background:rgba(160,160,160,.7);border-radius:2px;
+  box-shadow:4px 2px 0 rgba(160,160,160,.5);animation:vapor 1.6s infinite}
+@keyframes vapor{0%{opacity:0;transform:translateY(4px)}50%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+.st-livre .cafe,.st-esperando .cafe{display:block}
+.st-livre .braco.d,.st-esperando .braco.d{transform:rotate(-120deg)}
+.st-esperando .pessoa{animation:balanca 2.4s ease-in-out infinite}
+@keyframes balanca{50%{transform:rotate(-3deg)}}
+.relogio{display:none;position:absolute;right:6px;bottom:60px;font-size:18px}
+.st-esperando .relogio{display:block;animation:pisca2 1.4s infinite}
+@keyframes pisca2{50%{opacity:.3}}
+.cadeira{position:absolute;bottom:4px;left:14px;width:64px;height:42px;border-radius:8px 8px 4px 4px;background:#3c3c44;z-index:0}
+.caixa{display:none;position:absolute;width:30px;height:24px;background:#c89b5e;border:2px solid #8a6634;left:30px;top:44px;z-index:3}
+.st-entregando .caixa{display:block}
+.st-entregando .pessoa{animation:anda 3s ease-in-out infinite}
+@keyframes anda{0%{transform:translateX(0)}50%{transform:translateX(80px)}100%{transform:translateX(0)}}
+.st-entregando .braco{transform:rotate(-90deg)}
+/* estagiários (juízes chamados na hora) */
+.estagio{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.estag{background:var(--papel);border:2px dashed var(--borda);border-radius:12px;padding:8px 10px;display:flex;gap:10px;align-items:center;min-height:60px}
+.estag.vazio{opacity:.5}
+.mini{flex:none;width:30px;height:44px;position:relative}
+.mini .h{position:absolute;top:0;left:7px;width:16px;height:16px;border-radius:50%;background:#e0ac69}
+.mini .b{position:absolute;top:15px;left:3px;width:24px;height:26px;border-radius:9px 9px 4px 4px;background:#8e44ad}
+.estag.ativo .mini{animation:balanca 1s infinite}
+.estag .t{font-size:12px} .estag .t b{display:block;font-size:12.5px}
+/* sala do render */
+.render{margin-top:26px;border:3px solid #7fa7c0;background:var(--vidro);border-radius:12px;padding:12px;display:grid;
+  grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.gpu{width:70px;height:90px;background:#1c1f24;border-radius:6px;position:relative;box-shadow:0 4px 0 var(--sombra)}
+.gpu i{position:absolute;left:10px;right:10px;height:6px;border-radius:3px;background:#2d3640}
+.gpu i:nth-child(1){top:14px}.gpu i:nth-child(2){top:28px}.gpu i:nth-child(3){top:42px}
+.gpu.on i{background:#45e08a;animation:pisca2 .6s infinite}
+.gpu.on i:nth-child(2){animation-delay:.2s}.gpu.on i:nth-child(3){animation-delay:.4s}
+.barra{height:14px;background:var(--papel);border:1px solid var(--borda);border-radius:8px;overflow:hidden;margin:6px 0}
+.barra i{display:block;height:100%;background:linear-gradient(90deg,#2e9d5b,#58c98a);width:0;transition:width 1s}
+.render .linha{font:11.5px ui-monospace,Consolas,monospace;color:var(--tinta2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+aside{background:var(--painel);border-left:2px solid var(--borda);padding:14px;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 58px);overflow:auto}
+@media (max-width:980px){aside{border-left:0;border-top:2px solid var(--borda);max-height:none}}
+aside h3{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--tinta2)}
+.feed div{padding:6px 0;border-bottom:1px dashed var(--borda);font-size:12.5px}
+.feed time{color:var(--tinta2);font-size:11px;margin-right:6px}
+.feed b{text-transform:capitalize}
+.aviso{font-size:12px;color:var(--tinta2);background:var(--papel);border:1px solid var(--borda);border-radius:8px;padding:8px}
+.legenda{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px}
+.legenda span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px;background:var(--c)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏢 Escritório <small>Sala de Montagem — ao vivo</small></h1>
+  <div class="chips">
+    <div class="toggle" id="tg" title="Ligado: os funcionários pegam os pedidos do painel sozinhos"><span class="sw"></span><span id="tgtxt">Funcionários sozinhos</span></div>
+    <span class="chip" id="cGer">gerente: —</span>
+    <span class="chip" id="cDisco">disco: —</span>
+    <span class="chip" id="cYt">YouTube: —</span>
+    <a class="chip" href="/" style="text-decoration:none;color:inherit">← painel</a>
+  </div>
+</header>
+<div class="layout">
+  <main class="sala">
+    <div class="parede">
+      <div class="quadro"><h4>Fila de filmes</h4><div id="qFila">—</div></div>
+      <div class="quadro"><h4>Entregues hoje</h4><div id="qEnt">—</div></div>
+      <div class="porta">ENTREGAS</div>
+    </div>
+    <div class="mesas" id="mesas"></div>
+    <h3 style="margin:26px 0 0;font-size:13px;color:var(--tinta2);text-transform:uppercase;letter-spacing:.6px">Juízes chamados agora</h3>
+    <div class="estagio" id="estagio"></div>
+    <div class="render" id="render">
+      <div class="gpu" id="gpu"><i></i><i></i><i></i></div>
+      <div><b>Sala do render</b> <span id="rTit" style="color:var(--tinta2)">— vazia</span>
+        <div class="barra"><i id="rBar"></i></div>
+        <div class="linha" id="rLin">um render por vez no PC</div></div>
+    </div>
+  </main>
+  <aside>
+    <div class="legenda">
+      <span style="--c:var(--ok)">trabalhando</span><span style="--c:var(--espera)">esperando</span>
+      <span style="--c:var(--trava)">travado — precisa de você</span><span style="--c:var(--livre)">livre</span>
+    </div>
+    <div class="aviso" id="aviso">Carregando…</div>
+    <div><h3>Acontecendo agora</h3><div class="feed" id="feed"></div></div>
+  </aside>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hora = t => new Date(t * 1000).toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit"});
+const postos = {};
+let ultimo = null;
+
+function criaPosto(f) {
+  const el = document.createElement("div");
+  el.className = "posto";
+  el.style.setProperty("--roupa", f.roupa); el.style.setProperty("--cabelo", f.cabelo); el.style.setProperty("--pele", f.pele);
+  el.innerHTML = `
+    <div class="bolha"><span class="txt"></span><span class="filme"></span></div>
+    <div class="cena">
+      <div class="cadeira"></div>
+      <div class="pessoa"><div class="braco e"><div class="mao"></div></div>
+        <div class="corpo"></div><div class="cabelo"></div><div class="cabeca"></div>
+        <div class="olho e"></div><div class="olho d"></div>
+        <div class="braco d"><div class="mao"></div></div><div class="cafe"></div><div class="caixa"></div></div>
+      <div class="monitor"><div class="vid"></div></div>
+      <div class="mesa"></div><div class="relogio">⏳</div>
+    </div>
+    <div class="cracha"><div class="nome"></div><div class="cargo"></div></div>`;
+  // cabelo atrás da cabeça, olhos por cima
+  el.querySelector(".cabelo").style.zIndex = 2; el.querySelector(".cabeca").style.zIndex = 1;
+  el.querySelectorAll(".olho").forEach(o => o.style.zIndex = 3);
+  $("#mesas").appendChild(el);
+  return el;
+}
+
+function desenha(d) {
+  ultimo = d;
+  for (const f of d.funcionarios) {
+    const el = postos[f.id] || (postos[f.id] = criaPosto(f));
+    const cls = "posto st-" + f.estado;
+    if (el.className !== cls) el.className = cls;
+    el.querySelector(".nome").textContent = f.nome;
+    el.querySelector(".cargo").textContent = f.cargo;
+    el.querySelector(".txt").textContent = f.txt || "";
+    el.querySelector(".filme").textContent = f.filme ? "🎬 " + f.filme : "";
+  }
+  // estagiários (até 4 juízes)
+  const aj = d.ajudantes || [];
+  $("#estagio").innerHTML = [0, 1, 2, 3].map(i => {
+    const a = aj[i];
+    return a ? `<div class="estag ativo"><div class="mini"><div class="h"></div><div class="b"></div></div>
+      <div class="t"><b>Juiz ${i + 1}</b>${esc(a.txt)}<br><small style="color:var(--tinta2)">${esc(a.filme)}</small></div></div>`
+      : `<div class="estag vazio"><div class="mini"><div class="h"></div><div class="b" style="background:#999"></div></div>
+      <div class="t"><b>Mesa livre</b>juiz é chamado quando há fotos para julgar</div></div>`;
+  }).join("");
+  // render
+  const r = d.render;
+  $("#gpu").classList.toggle("on", !!r);
+  $("#rTit").textContent = r ? `— ${r.filme || r.baia} · ${r.fase}${r.segs ? " · segmentos " + r.segs : ""}` : "— vazia";
+  $("#rBar").style.width = r ? ((r.pct ?? (r.fase === "acabamento" ? 92 : 5)) + "%") : "0%";
+  $("#rLin").textContent = r ? (r.linha || "renderizando…") : "um render por vez no PC";
+  // quadros
+  $("#qFila").innerHTML = (d.fila || []).length ? d.fila.map(p =>
+    `<div>${p.status === "na_fila" ? "⏸" : p.status === "esperando_voce" ? "✋" : "▶"} ${esc(p.titulo)} · ${esc(p.etapa || p.status)}${p.baia ? " · " + p.baia : ""}</div>`).join("") : "<div>nenhum pedido esperando</div>";
+  $("#qEnt").innerHTML = (d.entregues || []).length ? d.entregues.slice().reverse().map(e => `<div>✔ ${esc(e.hora)} ${esc(e.slug)}</div>`).join("") : "<div>nada ainda</div>";
+  // topo
+  const g = d.gerente;
+  $("#tg").classList.toggle("on", g.ligado);
+  $("#tgtxt").textContent = g.ligado ? "Funcionários sozinhos: LIGADO" : "Funcionários sozinhos: desligado";
+  const cg = $("#cGer");
+  cg.innerHTML = g.vivo ? "gerente: <b>no escritório</b>" : "gerente: <b>fora</b>";
+  cg.classList.toggle("ruim", g.ligado && !g.vivo);
+  const rc = d.recursos;
+  $("#cDisco").innerHTML = `disco: <b>${rc.disco_gb} GB</b> livres`;
+  $("#cDisco").classList.toggle("ruim", rc.disco_gb < 25);
+  $("#cYt").innerHTML = rc.yt.pausa_min ? `YouTube: <b>pausa ${rc.yt.pausa_min} min</b>` : `YouTube: <b>${rc.yt.usadas}/${rc.yt.teto}</b> hoje`;
+  $("#cYt").classList.toggle("ruim", !!rc.yt.pausa_min);
+  $("#aviso").innerHTML = g.ligado
+    ? (g.vivo ? "Os funcionários pegam sozinhos cada pedido novo do painel (até 2 filmes ao mesmo tempo), entregam e conferem o MP4."
+              : "<b style='color:var(--trava)'>Ligado, mas o gerente está fora.</b> Abra <b>LIGAR_FUNCIONARIOS.bat</b> na pasta do painel.")
+    : "Desligado: os pedidos ficam com o Claude do chat. Ligue o botão acima para os funcionários trabalharem sozinhos (o LIGAR_FUNCIONARIOS.bat precisa estar aberto).";
+  $("#feed").innerHTML = (d.feed || []).map(e => `<div><time>${hora(e.t)}</time><b>${esc(e.quem)}</b> ${esc(e.txt)}${e.filme ? ` <small style="color:var(--tinta2)">(${esc(e.filme)})</small>` : ""}</div>`).join("")
+    || "<div style='color:var(--tinta2)'>ainda nada hoje</div>";
+}
+
+async function atualiza() {
+  try {
+    const r = await fetch("/api/escritorio", {cache: "no-store"});
+    if (r.ok) desenha(await r.json());
+  } catch (e) { /* painel reiniciando */ }
+}
+$("#tg").onclick = async () => {
+  const quer = !(ultimo && ultimo.gerente.ligado);
+  if (quer && !confirm("Ligar os funcionários sozinhos?\n\nEles vão pegar os pedidos do painel e produzir os filmes sem o chat, usando sua conta do Claude.")) return;
+  await fetch("/api/gerente", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ligado: quer})});
+  atualiza();
+};
+atualiza();
+setInterval(atualiza, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{
+ "id": "arquivo-colorizado",
+ "nome": "Arquivo Colorizado (história)",
+ "origem": "referencia",
+ "link": "https://youtu.be/hnQj4e3U8OM",
+ "video": "video.mp4",
+ "escolhas": {
+  "legendas": "serifa",
+  "cor": "quente",
+  "textura": "leve",
+  "destaque": "documentario",
+  "transicoes": "fusao",
+  "ritmo": "todos",
+  "render": "alta"
+ },
+ "liga": {
+  "music": true,
+  "sfx": false,
+  "voz": true,
+  "arquivo_dark": false,
+  "paralaxe": false,
+  "mapa": true,
+  "mergulho": false,
+  "barras": false,
+  "nitidez": true,
+  "moldura": true,
+  "pecas_colorizado": true,
+  "trilha_baixa": true
+ },
+ "desc": "História 1890-1960: fotos de arquivo impressas na mesa escura com etiqueta laranja, telas cheias coloridas de época, mapa de pergaminho, polaroides, linha do tempo e legenda serifada.",
+ "analise": "Documentário de história em ritmo calmo (gancho com ~21 cortes/min, depois ~5 por minuto, plano mediano ~9 s com push lento e fusões), cor quente e textura leve. Metade das imagens são fotos de arquivo impressas sobre uma mesa escura esfumaçada ou papel quadriculado, com etiqueta laranja LUGAR · DATA no canto; a outra metade são cenas coloridas de época em tela cheia. Peças próprias em serifa clássica + laranja: mapa de pergaminho (mar verde, terra bege, rotas azul/vermelha, distância pontilhada), polaroides com legenda datilografada caindo na mesa, linha do tempo, barras, número grande e citação com tarja laranja; nome+cargo nos retratos e tag ANO | TÍTULO em cada capítulo. Legenda Garamond pequena o tempo todo e trilha contínua baixa (−15 LUFS, sem silêncio).",
+ "receita": "ESTILO ESCOLHIDO PELO USUÁRIO: ARQUIVO COLORIZADO (painel/estilos/arquivo-colorizado.json; referência: documentário de\nhistória \"The Real Reason the United States Never Annexed Cuba\", 25 min). O acabamento DESTE estilo (tom quente, textura\nleve, legenda serifa, fusão nos cortes) vale para este filme — foi o usuário que escolheu. Regras do estilo:\n1. IMAGEM: continua 80 % fotos / 20 % vídeos. Fotos de ARQUIVO (Commons, LOC, NARA) do lugar/ano exatos do trecho.\n   O make_photos põe ~45 % delas como CÓPIA IMPRESSA na mesa escura ou no papel quadriculado (scripts/moldura.py).\n   Escreva data/moldura_rotulos.json ANTES do make_photos (chave = título da foto no photo_side.json):\n   - \"etiqueta\": \"LUGAR · DATA\" em caixa alta no idioma do filme (ex.: \"USS MAINE IN HAVANA HARBOR · 1898\") em ~1 foto\n     a cada 30-40 s — é a assinatura do estilo;\n   - \"nome\" + \"cargo\" no retrato de toda pessoa citada pela primeira vez;\n   - \"capitulo\": [\"1898\", \"THE FRUIT FALLS\"] + \"moldura\": false na 1ª foto de cada capítulo (tag no canto, tela cheia);\n   - \"moldura\": false nas fotos COLORIDAS de época e nas recriações (elas entram em tela cheia, como no original).\n   O original alterna 1 cópia impressa : 1 imagem colorida de época em tela cheia. Prefira fotos colorizadas/autocromos\n   de época do Commons para as telas cheias; vídeo de arquivo (Prelinger/Internet Archive) com cara de filme antigo.\n2. PEÇAS DE TELA CHEIA = src/scenes/arquivo_colorizado.tsx (no lugar da biblioteca comum; mesmas cues da narração):\n   MapaPergaminho (no gancho, ~0:25, e em cada guerra/rota/batalha: terras = contorno simplificado em lat/lon, lugares,\n   rotas azul/vermelha, distancia pontilhada), LinhaDoTempoAC (quando a narração resume 2-4 datas), Polaroids (quando\n   enumera 2-4 lugares/grupos: legenda datilografada \"LUGAR · ANO\"), BarrasAC e DadoAC (números DITOS), CitacaoAC (trecho\n   de lei, tratado, carta citado em voz). Mínimo por filme: 2 mapas, 1 linha do tempo, 2 polaroids, 1 barras ou dado,\n   1 citação; teto 1 peça a cada ~1,5 min. Use a \"etiqueta\" do bloco (ex.: \"THE WAR OF 1898\") nas peças.\n   Exemplos prontos: src/exemplos/ArquivoColorizadoEx.tsx (node scripts/render_exemplos_ac.mjs renderiza as prévias).\n   Sobreposições do modo enxuto (ficha, checklist, lupa...) ficam DESLIGADAS neste estilo: o texto na tela vem das\n   etiquetas, nomes e peças acima.\n3. RITMO: gancho (primeiros 60 s) com troca a cada 2-3 s (fotos caindo na mesa, mapa, tela cheia colorida);\n   depois 8-10 s por plano com push lento. Sem flash, sem whip, sem glitch, sem barras de cinema.\n4. SOM: trilha contínua orquestral/histórica, BEM BAIXA (regra do usuário 04/11: \"não deixe a trilha muito alta\" — pipeline_config trilha sob_voz_db -11 / respiro_db -4, ~-34 LUFS sob a voz; na revisão de áudio, se ainda soar alta, descer mais em vez de subir), da Biblioteca do YouTube (o original não tem silêncio nenhum);\n   sem efeitos sonoros. Legenda serifa SEMPRE ligada (é parte do visual).",
+ "revisado": true,
+ "metricas": {
+  "ritmo": {
+   "cortes": 114,
+   "cortes_por_min": 4.4,
+   "plano_medio": 13.42,
+   "plano_mediano": 9.02,
+   "plano_p90": 27.68,
+   "pretos": 0,
+   "pretos_por_10min": 0.0,
+   "cortes_por_min_gancho": 21,
+   "cortes_por_min_corpo": 5.3,
+   "obs": "a deteccao de cena perde as fusoes; medido de novo com limiar 0,12 nos 10 primeiros min"
+  },
+  "imagem": {
+   "brilho": 87.7,
+   "contraste": 47.2,
+   "saturacao": 0.332,
+   "fracao_pb": 0.0,
+   "temperatura": 28.8,
+   "vinheta": 0.63,
+   "grao": 1.0,
+   "fracao_barras": 0.0,
+   "fracao_legenda": 0.06,
+   "fracao_letreiro": 0.06
+  },
+  "som": {
+   "lufs": -15.2,
+   "lra": 4.1,
+   "fracao_silencio": 0.0
+  }
+ },
+ "capa": "referencias/20261104-134720-okeanos-cuba/capa.jpg",
+ "pasta": "referencias/20261104-134720-okeanos-cuba"
+}

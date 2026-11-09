@@ -1,0 +1,242 @@
+Siga o "prompt REAL FOOTAGE - IMAGENS.md" anexado (está nesta mesma pasta mapa).
+
+ONDE ESTE ARQUIVO E O "REAL FOOTAGE - IMAGENS" DIVERGIREM, VALE ESTE. Em especial:
+- NÃO faça as duas perguntas iniciais nem espere resposta: estão respondidas
+  logo abaixo.
+- NÃO abra o Remotion Studio para aprovação nem espere o meu "ok": a
+  conferência é pela folha de contato, e no fim você EXPORTA DIRETO.
+- ESTE FILME NÃO USA VÍDEO. Nada de YouTube, yt-dlp, youtube.py, cookies.txt,
+  vídeo do Commons, vídeo da NASA, Pexels/Pixabay ou qualquer outro clipe.
+  O filme inteiro é FOTO com movimento + animação do Remotion. Se alguma
+  regra, script ou rota antiga pedir vídeo, ignore e registre no
+  decisions_log.md.
+- Não cole o "INSTRUCOES PADRAO.md" junto: é a versão antiga destas regras.
+
+RESPOSTAS JÁ DADAS — NÃO PARE PARA PERGUNTAR
+- Animações: SIM. Legendas: NÃO. (Se eu mudar de ideia, edito esta linha.)
+- Wikimedia Commons: o bancos.py já manda o contato (wikimedia_contact.txt) e
+  o token (wikimedia_token.txt) no User-Agent — use sempre esse caminho, na
+  BUSCA e no DOWNLOAD. Sem contato no UA o Commons devolve 429 em todo
+  download — não é ritmo.
+- Qualquer outra dúvida no meio do caminho: escolha a opção mais conservadora,
+  registre no data/decisions_log.md e siga. Só pare para algo destrutivo FORA
+  da pasta mapa ou que custe dinheiro.
+
+PASTAS
+Tudo acontece na pasta mapa (C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\DarkEmpireCompleto\MAPA): roteiro.txt,
+audio.mp3 e legenda.srt novos já estão nela. ANTES DE COMEÇAR, mande para a
+Lixeira (não apague direto — o PC tem pouco espaço, eu esvazio) o material do
+filme anterior:
+  downloads/paragrafo*, downloads/partes.json, downloads/motion, capcut/,
+  plano.json, concat.txt, comando.txt, linha_do_tempo.json,
+  auto_relatorio.json, mapa.json, mapa.csv, auto_run*.log, sinc.log, b.log,
+  qa_fotos/, edicao/clips, edicao/segments, edicao/base.mp4,
+  edicao/clips_frames.json, edicao/plano_edicao.json, edicao/preview_*.mp4,
+  edicao_remotion/out, video_final.mp4, capitulos_youtube.txt, data/.
+Preserve o que não depende do tema: todos os .py/.mjs/.tsx, node_modules/,
+cookies.txt, wikimedia_token.txt, wikimedia_contact.txt,
+downloads/_transcricoes (cache do Whisper) e downloads/_cache_bancos.json.
+Confira a data de roteiro.txt, audio.mp3 e legenda.srt: os três têm que ser da
+mesma safra. Se algum for do filme anterior, pare e me diga.
+
+O QUE JÁ EXISTE — NÃO RECONSTRUA
+O pipeline está pronto na pasta mapa e funcionou ponta a ponta em dezenas de
+filmes. Leia LEIA-ME.md (seções "Camada 5", "Modo automático", "O movimento
+tremido") e LEIA-ME-imagens.md antes de tocar em qualquer coisa.
+Colheita: auto.py (--modelo → plano.json → auto.py), que usa bancos.py
+(Wikimedia, NASA, Internet Archive) e servidor.py (Openverse), com
+curadoria.py (travas) e clipcheck.py (CLIP local, grátis, sem cota).
+Sincronia: sincronizar.py (gera linha_do_tempo.json com o tempo real de cada
+foto a partir da legenda).
+Render rápido: edicao/render_clips.py → edicao/build_base.py →
+edicao/gerar_plano_edicao.py → edicao_remotion/render_overlays.mjs →
+edicao/final_render.py → qa.py.
+Antes da primeira colheita, reescreva para o tema novo o que é do tema:
+tema/assunto/epoca/evitar do plano.json; CAPITULOS e as chamadas add(...) do
+edicao/gerar_plano_edicao.py (hoje são do Tutankamon); o nome do capítulo
+"Introducción" no final_render.py para o idioma do roteiro. As regras genéricas
+da curadoria.py e do bancos.py ficam.
+
+EDIÇÃO
+Não fique preso ao pé da letra do roteiro: estar com a ambientação do lugar e
+do tema já é excelente. Capriche nos primeiros 90 segundos; depois pode ficar
+mais solto — solto, não relaxado. Pode começar com animação ou não, a seu
+critério, mas NÃO só com animação.
+
+O FILME É DE FOTO — E TEM QUE PARECER DOCUMENTÁRIO, NÃO SLIDESHOW. Para isso:
+- MOVIMENTO SEMPRE: nenhuma foto parada. Alterne push-in, pull-out, pan
+  horizontal e pan vertical (foto em pé), com direção escolhida pela
+  composição da foto (o movimento vai EM DIREÇÃO ao assunto, nunca o tira do
+  quadro). Nunca o mesmo movimento em duas fotos seguidas. Zoom de 1,00 a
+  1,08 no máximo; pan de no máximo 8% da largura. Motor: o
+  _renderizar_item do sincronizar.py (zoompan a 5760 px, curva 25% ease + 75%
+  linear) — é o que já foi medido sem tremor. Não troque de motor.
+- RITMO: primeiros 90 s com cortes de 2,5–4 s e as melhores fotos do filme;
+  depois 4–6 s por foto. Nunca mais de 7 s na mesma foto: trecho longo de
+  narração vira sequência de fotos do mesmo assunto em planos diferentes
+  (geral → detalhe → pessoa → lugar).
+- TRANSIÇÃO: crossfade curto (15 quadros, o TAIL do render_clips.py) entre
+  fotos; corte seco permitido em pico de retenção. Consistente no filme todo.
+- ACABAMENTO: o grade quente + vinheta + grão leve do final_render.py fica —
+  é o que costura fotos de fontes diferentes numa cor só.
+- QUALIDADE DA FOTO: lado maior ≥ 1920 px; abaixo de 1600 px não entra. Nada
+  de ampliar mais que 1,3x. Foto em pé só entra se couber um recorte 16:9
+  limpo com o assunto inteiro (e aí com pan vertical). NUNCA barra preta,
+  NUNCA fundo borrado atrás de foto pequena — isso é o que denuncia slideshow.
+- ANIMAÇÃO (Remotion) entra onde o roteiro pede número, data, lugar, nome,
+  comparação ou lista — mais ou menos a cada 45–90 s, onde o roteiro merecer,
+  nunca duas seguidas. Ela é o respiro do filme de foto: capriche.
+
+ORDEM DE BUSCA DAS FONTES (só as que já estão na pasta mapa)
+1. Domínio público de agência pública — NASA (bancos.nasa_images), e o que o
+   Commons guarda de arquivos nacionais, forças armadas dos EUA, Library of
+   Congress, arquivos nacionais do país do tema.
+2. Wikimedia Commons e Openverse em CC0, PDM, CC-BY ou CC-BY-SA. BY e BY-SA
+   exigem crédito: anote autor e licença. No Openverse, filtre já na consulta
+   (license_type=commercial,modification) e use buscas curtas de 2–3 palavras.
+3. Internet Archive — só foto de época; licença quase sempre "unverified":
+   use com parcimônia e marque no attribution.md.
+NÃO use Bing, DuckDuckGo, Google, Serper, site de notícia nem banco pago.
+Tema fora dos EUA: ancore a busca no país do roteiro (nome da cidade, da
+região, da moeda, da placa, da empresa real) — nada de foto americana
+genérica. Câmera pública do país (ex.: Agência Brasil em CC BY, kremlin.ru em
+CC BY 4.0) chega pelo Commons; cuidado com político no quadro.
+
+MEDIÇÃO NA PRIMEIRA HORA
+Antes de colher em escala, rode `py auto.py --so-plano` e depois `py auto.py
+--parte N` em ~6 partes variadas (uma de nome próprio, uma abstrata, uma de
+época). Monte a folha de contato delas e me diga o rendimento real: quantas
+prestam, de qual banco, e quais tipos de trecho vão exigir b-roll de
+ambientação. Só depois rode o auto.py inteiro.
+
+LICENÇAS QUE NUNCA ENTRAM
+Creative Commons NC (NonCommercial) e ND (NoDerivatives). Canal monetizado é
+uso comercial, e um push-in dentro de um filme montado é obra derivada. Isso
+tem que ser REGRA DE POOL (no curadoria.py / bancos.py, lendo a licença do
+extmetadata do Commons e o campo license do Openverse), não lista de arquivos
+rejeitados: se você rejeitar os NC um por um, o casador pega o próximo NC e
+eles voltam na rodada seguinte. Foto sem licença legível = "unverified".
+
+REJEITE SEM PENSAR DUAS VEZES
+- Não é fotografia: infográfico, mapa de atlas alheio, "visual explainer",
+  gráfico com texto, flowchart, montagem de opinião, colagem com emenda, dupla
+  exposição, render 3D, imagem gerada por IA, captura de tela. (O filme tem
+  animações próprias — gráfico de terceiro não é apoio, é concorrência.)
+- Capa de livro ou revista, página escaneada, documento datilografado,
+  selo, brasão, medalha, cédula isolada em fundo branco (as travas de
+  "documento plano" do bancos.py já pegam parte — o olho pega o resto).
+- Foto de produto: review, guia de compra, "os 10 melhores", mockup.
+- Recriação moderna vestida de época. Use "recreating", não "recreat" —
+  "recreation area" é um parque.
+- Texto ou marca dentro da imagem: marca d'água, selo de imprensa, assinatura
+  de fotógrafo, logo, URL no rodapé, card de blog, mapa localizador no canto.
+  Texto estrangeiro pesado dominando o quadro também sai.
+- Hosts que fotografam o objeto errado: casa de leilão (o LOTE), sebo (a
+  CAPA), loja de mapas (o quadro na PAREDE), wallpaper, clipart.
+- Foto de evento em vez do assunto: cerimônia, discurso, visita de
+  autoridade, entrega de medalha, desfile, museu, peça de exposição.
+- Colisão de nome: consulte a lista de colisões já vistas no
+  LEIA-ME-imagens.md e na memória do projeto ("mummy", "loan", "customer",
+  "aerial", "rows", "lot", "park", "child", "flight", "booking"…). Palavra
+  comum nunca vai sozinha no `mostrar`; sempre com o substantivo concreto do
+  filme. Marca, modelo, lugar e nome próprio real rendem mais que conceito.
+
+PAÍS ERRADO — AS DUAS ARMADILHAS
+Confine cada parte ao país do filme, a menos que o próprio trecho peça outro
+lugar.
+(1) Ao decidir "esta parte pede outro país?", olhe SÓ o que ela É SOBRE:
+texto, busca, mostrar. NUNCA o evitar. O evitar é uma lista de países
+estrangeiros; ler ele como pedido desliga o confinamento no filme inteiro.
+(2) A lista de "outro lugar" precisa de NOMES DE LUGARES, não só de países:
+cidades, praias, desertos, bairros — legenda quase nunca diz o país.
+
+ÉPOCA ERRADA
+Aperte a `epoca` do plano.json para ±5 anos quando o assunto é datado. Um
+cartaz dos anos 1980 catalogado como "vintage" pontua como material de época
+num trecho de 1935. Filme sobre algo atual: foto P&B vintage não entra.
+
+CONFERÊNCIA ANTES DE EXPORTAR
+Folha de contato é o único juiz — curadoria por título diz "0 problemas" e a
+folha mostra dezenas de fotos para trocar. Monte com PIL: 30 miniaturas por
+PNG, rotuladas com parte + nome do arquivo. Nesta ordem:
+1. Depois do auto.py: folha de TODAS as fotos do disco (miniatura é barato;
+   não abra foto uma por uma). clipcheck.py antes, para já tirar o assunto
+   errado.
+2. Depois do build_base.py: folha com um quadro do MIOLO de cada plano
+   (margem de ~20 quadros das bordas — um crossfade parece montagem
+   malfeita). Confere movimento cortando o assunto, barra preta, foto pixelada.
+3. Depois do final_render.py: folha de 1 quadro a cada 20 s + 1 quadro no
+   meio de cada animação.
+Espere de 3 a 6 rodadas. Compare entre rodadas e monte folha só do que mudou.
+Se você rejeitou quatro arquivos do mesmo host, da mesma série ou da mesma
+frase de busca, o problema não são os arquivos: falta uma regra (curadoria.py
+ou a busca daquela parte). E antes de rejeitar, confira — um quadro "lavado"
+no primeiro frame do plano é fade, não defeito.
+TRAVE O QUE FOI APROVADO desde a primeira rodada (data/image_locks.json): o
+auto.py recria a memória a cada execução e traz de volta o que foi rejeitado
+(regra 5 do LEIA-ME-imagens.md). Rejeitada vai para data/image_rejects.json
+E sai do pool — nunca só da pasta. Nas últimas rodadas, as partes teimosas
+recebem fotos já aprovadas em outro ponto do filme.
+Repetição: no máximo 2 aparições por foto, nunca em partes vizinhas, e a
+distância mínima (60 s) medida contra TODAS as outras aparições, nos dois
+sentidos.
+
+RENDER — RÁPIDO: FFMPEG MONTA, REMOTION SÓ ANIMA
+O filme não passa inteiro pelo Remotion em nenhum momento. Na ordem:
+1. `py edicao/render_clips.py` — cada foto vira um clipe com movimento + cauda
+   de 15 quadros, 6 processos em paralelo (acima disso o disco vira gargalo).
+2. Animações: edicao/gerar_plano_edicao.py escreve plano_edicao.json; o
+   render_overlays.mjs faz UM bundle e renderiza SÓ as composições do plano.
+   Animação de tela cheia → codec h264, crf 16, concurrency 6 (rápido, sem
+   alfa). Alfa em VP9 (yuva420p) só para elemento que fica POR CIMA da foto
+   (lower third, place tag) — é bem mais lento; use pouco.
+3. `py edicao/build_base.py` — encadeia os clipes com xfade em lotes de 40, 3
+   lotes em paralelo, libx264 veryfast crf 16, e junta com concat -c copy.
+   Animação de tela cheia entra na corrente como mais um clipe (mesma cauda,
+   mesmo fade), no quadro exato do plano.
+4. `py edicao/final_render.py` — grade, vinheta, grão, overlays com alfa,
+   loudness −14 LUFS no audio.mp3 original. LEGENDAS: NÃO → tire o filtro
+   subtitles desta vez (deixe atrás de uma flag --legenda, desligada).
+   Saída h264 preset fast, crf 18, aac 192k, +faststart.
+Antes do render final, faça `py edicao/final_render.py --preview 0 90` e
+confira a folha dos primeiros 90 s. Nunca rode colheita, CLIP ou auto.py junto
+com o render. Quando o render começar, me avise para fechar o Chrome.
+
+TRAVAS QUE IMPEDEM A ENTREGA
+qa.py com 0 falhas e 0 avisos (duração × áudio, trecho preto, trecho
+congelado, loudness). Contagem de quadros de base.mp4 igual ao total da
+linha_do_tempo.json (o build_base.py já imprime "OK"). Duração do vídeo igual
+à do áudio. tsc --noEmit limpo no edicao_remotion. Auditoria de chr(8) zerada
+nos arquivos gerados por script — \b escrito por script vira BACKSPACE; gere
+arquivo com regex pela ferramenta de escrita, nunca por heredoc, e teste cada
+padrão contra strings que ele PRECISA e NÃO PODE casar. Os arquivos de foto
+têm prefixo numérico ("01_Nome.jpg"): nunca use ^ ou $ nos padrões de nome.
+Nunca edite .cmd com sed. Todas as fotos referenciadas no plano existem e têm
+o tamanho certo ANTES do render. Job longo no Windows só sobrevive como
+tarefa agendada, com IdleSettings.StopOnIdleEnd desligado.
+
+MÁQUINA
+- Nunca mate python ou node pelo nome: outro projeto roda nesta máquina. Mate
+  só pela linha de comando. Stop-ScheduledTask não mata o processo filho.
+- Quem grava índice/cache (_cache_bancos.json, image_locks.json) tem que
+  mesclar com o que está no disco, nunca reescrever da memória.
+- PC com pouco espaço: nada de cópia intermediária desnecessária; clipes e
+  segmentos vão para a Lixeira depois que o final passar no QA.
+
+COMUNICAÇÃO
+Em toda etapa longa, diga o que está rodando e quanto falta, sem eu precisar
+perguntar. Mantenha data/progress.md com a etapa atual e o próximo comando: se
+o limite de uso cortar a sessão, a retomada começa por ele.
+
+ENTREGA
+Quando terminar, EXPORTE DIRETO, SEM PREVIEW. Entregue video_final.mp4,
+capitulos_youtube.txt, data/attribution.md (licença e autor de cada foto,
+quantas estão "unverified" EM DESTAQUE, e o bloco de créditos BY/BY-SA já
+escrito para colar na descrição), data/visual_plan.md, data/decisions_log.md,
+data/scene_review_log.md, data/alignment_report.md, e três miniaturas no
+idioma do roteiro testadas a 210 px de largura.
+MINIATURA: o objeto do vídeo É a miniatura. Foto em força total (nada de foto
+escurecida), recortada para o objeto inteiro encher o quadro; no máximo DUAS
+palavras, numa linha, num canto vazio da foto, sem cobrir o objeto; sem faixa,
+sem sobretítulo. A foto tem que estar no filme, e tem que ter licença
+verificada (nunca "unverified").

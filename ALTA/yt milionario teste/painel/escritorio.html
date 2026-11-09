@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/app/editai512.png"><link rel="apple-touch-icon" href="/app/editai512.png">
+<title>Edit.AI by Galvão · Escritório</title>
+<style>
+:root{--ok:#34c26f;--espera:#f0a92b;--trava:#ef4b47;--livre:#9aa0a6;--entrega:#4aa3ff;--hud:rgba(18,20,26,.84);--hud2:rgba(255,255,255,.08);--txt:#eef1f5;--mute:#a7adb7;--marca:#ff3b5c}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#0f1218;color:var(--txt);font:14px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif}
+#cena{position:fixed;inset:0}
+#cena canvas{display:block}
+.hud{position:fixed;z-index:10;background:var(--hud);backdrop-filter:blur(8px);border:1px solid var(--hud2);border-radius:14px}
+#topo{top:12px;left:12px;right:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px}
+#topo h1{font-size:16px;margin:0 8px 0 2px;white-space:nowrap;display:flex;align-items:center;gap:8px}
+#topo h1 .lg{display:inline-grid;place-items:center;width:26px;height:19px;border-radius:5px;background:var(--marca);font-size:10px}
+#topo h1 small{font-weight:400;color:var(--mute)}
+.chip{padding:5px 10px;border-radius:999px;background:var(--hud2);font-size:12.5px;white-space:nowrap}
+.chip.ruim{background:rgba(239,75,71,.22);color:#ffb3b0}
+.chip a{color:inherit}
+.tg{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 12px;border-radius:999px;background:var(--hud2);font-weight:600;font-size:13px;user-select:none}
+.tg .sw{width:36px;height:20px;border-radius:20px;background:#555;position:relative;transition:.2s}
+.tg .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.tg.on .sw{background:var(--ok)} .tg.on .sw::after{left:18px}
+.btn{cursor:pointer;padding:5px 11px;border-radius:999px;background:var(--hud2);border:0;color:inherit;font:inherit;font-size:12.5px;white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,.16)}
+.btn.tour{background:var(--marca);color:#fff;font-weight:700}
+#salas{top:64px;left:12px;display:flex;flex-wrap:wrap;gap:6px;padding:7px 9px;max-width:calc(100% - 24px)}
+#salas .btn.on{background:#fff;color:#111}
+#lado{bottom:58px;right:12px;width:280px;max-height:34vh;overflow:auto;padding:10px 12px}
+#lado.fechado .feed{display:none}
+#lado h3{cursor:pointer;margin:0 0 8px;font-size:12px;letter-spacing:.7px;text-transform:uppercase;color:var(--mute)}
+.feed div{padding:6px 0;border-bottom:1px solid var(--hud2);font-size:12.5px}
+.feed time{color:var(--mute);font-size:11px;margin-right:6px}
+#ficha{left:12px;bottom:12px;width:min(360px,calc(100% - 24px));padding:12px 14px;display:none}
+#ficha .n{font-size:17px;font-weight:700} #ficha .c{color:var(--mute);font-size:12.5px}
+#ficha .e{display:inline-block;margin:8px 0 6px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600}
+#ficha .t{font-size:13.5px} #ficha .f{color:var(--mute);font-size:12px;margin-top:4px}
+#tourCard{left:50%;transform:translateX(-50%);top:118px;width:min(560px,calc(100% - 24px));padding:14px 18px;display:none}
+#tourCard .k{font:700 11px system-ui;letter-spacing:1.4px;text-transform:uppercase;color:var(--marca)}
+#tourCard h2{margin:2px 0 6px;font-size:22px}
+#tourCard p{margin:0 0 8px;color:#d6dae1;font-size:14px}
+#tourCard .gente{font-size:13px;color:var(--mute)} #tourCard .gente b{color:var(--txt)}
+#tourCard .nav{display:flex;gap:8px;margin-top:10px;align-items:center}
+#tourCard .barra{flex:1;height:4px;border-radius:4px;background:var(--hud2);overflow:hidden}
+#tourCard .barra i{display:block;height:100%;width:0;background:var(--marca)}
+#legenda{left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:14px;padding:7px 14px;font-size:12px}
+#legenda span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px;background:var(--c)}
+@media (max-width:820px){#lado{display:none}#legenda{display:none}#salas{top:auto;bottom:12px}}
+.tag{transform:translateY(-6px);text-align:center;pointer-events:none}
+.tag .nm{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(15,17,22,.78);color:#fff;font:700 11.5px system-ui;border:2px solid var(--c,#999)}
+.tag .bl{display:block;margin:0 auto 4px;max-width:190px;padding:5px 8px;border-radius:10px;background:rgba(255,255,255,.95);color:#1d2024;
+  font:12px/1.25 system-ui;box-shadow:0 2px 8px rgba(0,0,0,.35);border:2px solid var(--c,#999);white-space:normal}
+.tag .bl small{display:block;color:#66707c;font-size:10.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag .bl:empty{display:none}
+.tag.travado .bl{animation:pulso 1s infinite}
+@keyframes pulso{50%{box-shadow:0 0 0 5px rgba(239,75,71,.45)}}
+.ex{font:900 28px system-ui;color:#ff4d4d;text-shadow:0 2px 6px #000;animation:pula .6s infinite alternate;pointer-events:none}
+@keyframes pula{to{transform:translateY(-8px)}}
+.rotulo3d{pointer-events:none;padding:4px 10px;border-radius:8px;background:rgba(15,17,22,.8);color:#fff;font:600 12px system-ui;white-space:nowrap}
+.nomeSala{pointer-events:none;padding:3px 10px;border-radius:7px;background:rgba(255,59,92,.88);color:#fff;font:800 11px system-ui;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+body.semNomes .nomeSala{display:none}
+#erro{position:fixed;inset:0;display:none;place-items:center;text-align:center;padding:30px}
+#carregando{position:fixed;inset:0;display:grid;place-items:center;z-index:20;background:#0f1218;font-size:15px;color:var(--mute)}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<link rel="icon" type="image/svg+xml" href="/app/editai.svg"><link rel="stylesheet" href="/app/space-grotesk.css"><link rel="stylesheet" href="/app/editai.css?v=7">
+</head>
+<body class="page-office">
+<div id="cena"></div>
+<div id="carregando">Abrindo o Edit.AI by Galvão…</div>
+<div id="erro"><div><h2>Não deu para abrir o 3D</h2><p>O navegador não carregou o 3D (sem internet ou sem WebGL).</p>
+  <p><a href="/previa/escritorio_2d.html" style="color:#7cc4ff">Abrir o escritório 2D</a></p></div></div>
+<div id="topo" class="hud">
+  <h1><span class="lg">▶</span>Edit.AI by Galvão <small>escritório ao vivo</small></h1>
+  <div class="tg" id="tg" title="Ligado: os funcionários pegam os pedidos do painel sozinhos"><span class="sw"></span><span id="tgtxt">Funcionários sozinhos</span></div>
+  <span class="chip" id="cGer">gerente —</span>
+  <span class="chip" id="cRen">render —</span>
+  <span class="chip" id="cDisco">disco —</span>
+  <span class="chip" id="cYt">YouTube —</span>
+  <button class="btn tour" id="bTour">🎬 Tour pelas salas</button>
+  <button class="btn" id="bVisao">🏢 Visão geral</button>
+  <button class="btn" id="bGira">🔄 Girar</button>
+  <button class="btn" id="bNomes">🏷 Nomes das salas</button>
+  <span class="chip"><a href="/">← painel</a></span>
+</div>
+<div id="salas" class="hud"></div>
+<div id="tourCard" class="hud">
+  <div class="k" id="tK"></div><h2 id="tH"></h2><p id="tP"></p><div class="gente" id="tG"></div>
+  <div class="nav"><button class="btn" id="tAnt">◀</button><div class="barra"><i id="tBar"></i></div>
+    <button class="btn" id="tPausa">⏸</button><button class="btn" id="tProx">▶</button><button class="btn" id="tFim">✕ sair</button></div>
+</div>
+<div id="lado" class="hud"><h3 id="hFeed">Acontecendo agora ▾</h3><div class="feed" id="feed"></div></div>
+<div id="ficha" class="hud"><div class="n" id="fN"></div><div class="c" id="fC"></div><div class="e" id="fE"></div>
+  <div class="t" id="fT"></div><div class="f" id="fF"></div></div>
+<div id="legenda" class="hud">
+  <span style="--c:var(--ok)">trabalhando</span><span style="--c:var(--espera)">esperando</span>
+  <span style="--c:var(--trava)">travado — precisa de você</span><span style="--c:var(--entrega)">entregando</span><span style="--c:var(--livre)">livre</span>
+</div>
+
+<script type="module">
+// 07/10/2026 — escritório da Edit.AI by Galvão em SALAS (pedido do usuário): cada funcionário tem a sua sala, todos
+// andam pelo corredor central, e o botão Tour passeia a câmera sala por sala. Mesmos dados de /api/escritorio.
+// Versão anterior (salão único): escritorio.html.bak_salas.
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+
+const EMPRESA = "Edit.AI by Galvão";
+const COR = {trabalhando: "#34c26f", esperando: "#f0a92b", travado: "#ef4b47", entregando: "#4aa3ff", livre: "#9aa0a6"};
+const NOME_EST = {trabalhando: "trabalhando", esperando: "esperando", travado: "travado — precisa de você", entregando: "entregando", livre: "livre"};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const V = (x, z, y = 0) => new THREE.Vector3(x, y, z);
+
+// ------------------------------------------------------------------ salas (planta)
+// corredor central em z -1,5..1,5; salas ao norte (z < -1,5) e ao sul (z > 1,5); porta de cada sala no corredor
+const N0 = -13, S1 = 13, CZ = 1.5;
+const SALAS = [
+  {id: "recepcao", nome: "Recepção", x0: -20, x1: -10, lado: "s", piso: 0x8a7a68,
+   txt: `Entrada da ${EMPRESA}. Os juízes chamados na hora entram por aqui e vão direto para a Sala dos Juízes.`},
+  {id: "diretoria", nome: "Diretoria", x0: -20, x1: -10, lado: "n", piso: 0x6d4c3d,
+   txt: "Dora (baia 1) e Davi (baia 2) dirigem cada filme do começo ao fim. O quadro mostra a fila e o que foi entregue hoje."},
+  {id: "pesquisa", nome: "Pesquisa & Roteiro", x0: -10, x1: 0, lado: "n", piso: 0x3f5a4a,
+   txt: "Paulo garimpa pautas na gringa, escreve os roteiros e busca as fotos; Bia caça os vídeos no YouTube e no Pexels."},
+  {id: "juizes", nome: "Sala dos Juízes", x0: 0, x1: 10, lado: "n", piso: 0x5a4a6a,
+   txt: "Júlia comanda os juízes de fotos chamados na hora; Vitor julga os vídeos quadro a quadro."},
+  {id: "render", nome: "Sala do Render", x0: 10, x1: 20, lado: "n", piso: 0x33414f,
+   txt: "Renato cuida do render: um filme por vez, com o PC só para ele (render exclusivo)."},
+  {id: "copa", nome: "Copa", x0: -10, x1: 0, lado: "s", piso: 0x7d6a4f,
+   txt: "Quem está esperando um download ou está livre vem tomar um café."},
+  {id: "revisao", nome: "Sala de Revisão", x0: 0, x1: 10, lado: "s", piso: 0x2f3a46,
+   txt: "Rita confere os cortes antes do render e o MP4 final no telão — nada sai sem passar por ela."},
+  {id: "expedicao", nome: "Expedição", x0: 10, x1: 20, lado: "s", piso: 0x6a5a45,
+   txt: "Filme pronto sai pela porta ENTREGAS. Cada caixa na pilha é um filme entregue hoje."},
+];
+for (const s of SALAS) {
+  s.z0 = s.lado === "n" ? N0 : CZ; s.z1 = s.lado === "n" ? -CZ : S1;
+  s.cx = (s.x0 + s.x1) / 2; s.cz = (s.z0 + s.z1) / 2;
+  s.portaX = s.cx;
+  s.dentro = V(s.portaX, s.lado === "n" ? -CZ - 1.1 : CZ + 1.1);   // ponto logo depois da porta
+  s.cam = s.lado === "n" ? {pos: V(s.cx, s.cz + 9.5, 9), alvo: V(s.cx, s.cz - 0.5, 0.6)}
+                         : {pos: V(s.cx, s.cz - 9.5, 9), alvo: V(s.cx, s.cz + 0.5, 0.6)};
+}
+const salaDe = p => SALAS.find(s => p.x >= s.x0 - 0.01 && p.x <= s.x1 + 0.01 && p.z >= s.z0 - 0.01 && p.z <= s.z1 + 0.01);
+
+// ------------------------------------------------------------------ cena
+const hora = new Date().getHours();
+const noite = hora >= 19 || hora < 6;
+const box = $("#cena");
+const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = noite ? 1.2 : 1.05;
+box.appendChild(renderer.domElement);
+const labels = new CSS2DRenderer();
+labels.setSize(innerWidth, innerHeight);
+Object.assign(labels.domElement.style, {position: "fixed", inset: "0", pointerEvents: "none"});
+box.appendChild(labels.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(noite ? 0x0b1120 : 0x9fc4e6);
+scene.fog = new THREE.Fog(scene.background, 60, 110);
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 250);
+const VISAO = {pos: V(0, 30, 27), alvo: V(0, 0, 0)};
+camera.position.copy(VISAO.pos);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(VISAO.alvo);
+controls.enableDamping = true;
+controls.maxPolarAngle = 1.35;
+controls.minDistance = 3;
+controls.maxDistance = 75;
+controls.autoRotateSpeed = 0.5;
+
+scene.add(new THREE.HemisphereLight(noite ? 0x8b97c4 : 0xe6efff, 0x4a3f35, noite ? 0.85 : 0.95));
+const sol = new THREE.DirectionalLight(noite ? 0xaab8ff : 0xfff1dc, noite ? 0.5 : 1.6);
+sol.position.set(-16, 30, 18);
+sol.castShadow = true;
+sol.shadow.mapSize.set(2048, 2048);
+Object.assign(sol.shadow.camera, {left: -26, right: 26, top: 20, bottom: -20, near: 1, far: 90});
+sol.shadow.bias = -0.0004;
+scene.add(sol);
+
+const mat = (c, o = {}) => new THREE.MeshStandardMaterial({color: c, roughness: 0.75, metalness: 0.05, ...o});
+function malha(geo, m, x = 0, y = 0, z = 0, sombra = true) {
+  const me = new THREE.Mesh(geo, m);
+  me.position.set(x, y, z);
+  me.castShadow = sombra;
+  me.receiveShadow = true;
+  return me;
+}
+const B = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+function texto(txt, w, h, o = {}) {   // placa com texto (canvas)
+  const c = document.createElement("canvas"); c.width = o.cw || 512; c.height = o.ch || 128;
+  const g = c.getContext("2d");
+  g.fillStyle = o.fundo || "#1d2430"; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = o.cor || "#fff"; g.font = o.fonte || "bold 54px system-ui"; g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillText(txt, c.width / 2, c.height / 2 + 2);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  return malha(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: o.brilho ?? 0.55}), 0, 0, 0, false);
+}
+
+// terreno, calçada e prédio
+const grama = malha(new THREE.PlaneGeometry(140, 110), mat(noite ? 0x1d3320 : 0x4f7d3f), 0, -0.02, 0, false);
+grama.rotation.x = -Math.PI / 2; scene.add(grama);
+const calcada = malha(new THREE.PlaneGeometry(46, 32), mat(0x9a958c), 0, -0.01, 0, false);
+calcada.rotation.x = -Math.PI / 2; scene.add(calcada);
+// pisos das salas e do corredor
+for (const s of SALAS) {
+  const p = malha(new THREE.PlaneGeometry(s.x1 - s.x0, s.z1 - s.z0), mat(s.piso, {roughness: 0.9}), s.cx, 0.005, s.cz, false);
+  p.rotation.x = -Math.PI / 2; scene.add(p);
+  const tapete = malha(B(4.2, 0.02, 3), mat(new THREE.Color(s.piso).offsetHSL(0, 0.08, 0.1)), s.cx, 0.012, s.cz + (s.lado === "n" ? 2.4 : -2.4), false);
+  scene.add(tapete);
+}
+const corr = malha(new THREE.PlaneGeometry(40, 3), mat(0xcfc6b6, {roughness: 0.6}), 0, 0.006, 0, false);
+corr.rotation.x = -Math.PI / 2; scene.add(corr);
+for (let x = -19; x <= 19; x += 2) scene.add(malha(B(0.9, 0.012, 0.9), mat(0xb5ab98), x, 0.012, 0, false));
+
+// paredes: externas inteiras; internas com rodapé opaco + vidro em cima (dá para ver dentro)
+const paredeM = mat(noite ? 0xb2a998 : 0xe9e1d3);
+const baseM = mat(0x6c5841);
+const vidroM = new THREE.MeshStandardMaterial({color: 0xa8d8ff, transparent: true, opacity: 0.18, roughness: 0.05, metalness: 0.2, depthWrite: false});
+const caixilho = mat(0x50585f, {metalness: 0.5, roughness: 0.4});
+const H = 3.2;
+function paredeCheia(x0, z0, x1, z1) {
+  const w = Math.hypot(x1 - x0, z1 - z0), me = malha(B(w, H, 0.25), paredeM, (x0 + x1) / 2, H / 2, (z0 + z1) / 2);
+  me.rotation.y = -Math.atan2(z1 - z0, x1 - x0); scene.add(me);
+}
+function paredeVidro(x0, z0, x1, z1) {
+  const w = Math.hypot(x1 - x0, z1 - z0), ang = -Math.atan2(z1 - z0, x1 - x0), cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+  const base = malha(B(w, 1.0, 0.2), baseM, cx, 0.5, cz); base.rotation.y = ang; scene.add(base);
+  const v = malha(B(w, H - 1.0, 0.06), vidroM, cx, 1.0 + (H - 1.0) / 2, cz, false); v.rotation.y = ang; v.renderOrder = 2; scene.add(v);
+  const topo = malha(B(w, 0.1, 0.12), caixilho, cx, H, cz); topo.rotation.y = ang; scene.add(topo);
+}
+// externas
+paredeCheia(-20, N0, 20, N0);
+paredeCheia(-20, N0, -20, 6); paredeCheia(-20, 8, -20, S1);           // porta da ENTRADA em z 6..8
+paredeCheia(20, N0, 20, 6); paredeCheia(20, 8, 20, S1);               // porta ENTREGAS em z 6..8
+paredeCheia(-20, S1, 20, S1);
+paredeCheia(-20, -CZ, -20, CZ); paredeCheia(20, -CZ, 20, CZ);
+// janelas na parede norte
+const janelaM = new THREE.MeshStandardMaterial({color: noite ? 0x1b2a4a : 0xbfe3ff, emissive: noite ? 0x0a1430 : 0x9fd3ff, emissiveIntensity: 0.5, roughness: 0.2});
+for (const x of [-17.5, -12.5, -7.5, -2.5, 2.5, 7.5]) scene.add(malha(B(2.6, 1.6, 0.08), janelaM, x, 2.0, N0 + 0.15, false));
+// internas: divisórias entre salas e paredes do corredor (com vão de porta de 1,8 m no centro de cada sala)
+for (const x of [-10, 0, 10]) { paredeVidro(x, N0, x, -CZ); paredeVidro(x, CZ, x, S1); }
+for (const s of SALAS) {
+  const z = s.lado === "n" ? -CZ : CZ;
+  paredeVidro(s.x0, z, s.portaX - 0.9, z); paredeVidro(s.portaX + 0.9, z, s.x1, z);
+  // placa com o nome da sala sobre a porta (dos dois lados)
+  for (const lado of [1, -1]) {
+    const pl = texto(s.nome.toUpperCase(), 2.6, 0.42, {fundo: "#ff3b5c", fonte: "bold 46px system-ui"});
+    pl.position.set(s.portaX, 2.75, z + lado * 0.14); if (lado < 0) pl.rotation.y = Math.PI;
+    if (s.lado === "s") pl.rotation.y += Math.PI;
+    scene.add(pl);
+  }
+  // rótulo flutuante
+  const rot = new CSS2DObject(Object.assign(document.createElement("div"), {className: "nomeSala", textContent: s.nome}));
+  rot.position.set(s.cx, 3.7, s.cz); scene.add(rot);
+  // luz da sala
+  const l = new THREE.PointLight(s.id === "render" ? 0x9fd0ff : 0xffdcae, noite ? 22 : 7, 14, 1.6);
+  l.position.set(s.cx, 3.0, s.cz); scene.add(l);
+}
+for (const x of [-14, -5, 5, 14]) { const l = new THREE.PointLight(0xfff0d6, noite ? 10 : 3, 9, 1.8); l.position.set(x, 2.9, 0); scene.add(l); }
+// letreiro da empresa no telhado/fachada (lado sul, visto da câmera)
+{ const lt = texto(EMPRESA, 9, 1.3, {fundo: "#111418", cor: "#ffffff", fonte: "900 74px system-ui", cw: 1024, ch: 150, brilho: 0.9});
+  lt.position.set(-15, 4.0, S1 + 0.2); scene.add(lt);
+  scene.add(malha(B(9.3, 1.45, 0.12), mat(0xff3b5c), -15, 4.0, S1 + 0.12)); }
+
+// ------------------------------------------------------------------ móveis
+const MON = {};
+function telaTex(w = 128, h = 80) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  return {c, g: c.getContext("2d"), t, off: 0};
+}
+function cadeira(g, x, z, cor = 0x2b2f3a, giro = 0) {
+  const ch = new THREE.Group(); ch.position.set(x, 0, z); ch.rotation.y = giro;
+  ch.add(malha(B(0.56, 0.08, 0.52), mat(cor), 0, 0.48, 0));
+  ch.add(malha(B(0.56, 0.6, 0.08), mat(cor), 0, 0.82, 0.25));
+  ch.add(malha(new THREE.CylinderGeometry(0.04, 0.04, 0.44), mat(0x2d2f33), 0, 0.22, 0));
+  ch.add(malha(new THREE.CylinderGeometry(0.3, 0.3, 0.04, 12), mat(0x2d2f33), 0, 0.03, 0));
+  g.add(ch);
+}
+function mesa(x, z, dono, giro = 0, monitores = 1, cor = 0x9b6b43) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z); g.rotation.y = giro;
+  const pe = mat(0x2d2f33);
+  g.add(malha(B(2, 0.08, 1), mat(cor), 0, 0.76, 0));
+  for (const [a, b] of [[-0.92, -0.42], [0.92, -0.42], [-0.92, 0.42], [0.92, 0.42]]) g.add(malha(B(0.06, 0.76, 0.06), pe, a, 0.38, b));
+  g.add(malha(B(0.6, 0.03, 0.2), mat(0x1c1c1c), 0, 0.81, 0.18));
+  const tt = telaTex();
+  const telaM = new THREE.MeshStandardMaterial({map: tt.t, emissive: 0xffffff, emissiveMap: tt.t, emissiveIntensity: 0.9});
+  for (let i = 0; i < monitores; i++) {
+    const mx = (i - (monitores - 1) / 2) * 0.72;
+    g.add(malha(B(0.68, 0.44, 0.05), mat(0x15171b), mx, 1.12, -0.28));
+    g.add(malha(new THREE.PlaneGeometry(0.62, 0.38), telaM, mx, 1.12, -0.252, false));
+    g.add(malha(B(0.06, 0.3, 0.06), pe, mx, 0.92, -0.3));
+  }
+  cadeira(g, 0, 0.95);
+  g.add(malha(new THREE.CylinderGeometry(0.05, 0.045, 0.1, 10), mat(0xffffff), 0.72, 0.85, 0.1));
+  g.add(malha(B(0.22, 0.03, 0.3), mat(0xf1e6c8), -0.68, 0.81, 0.08));
+  scene.add(g);
+  if (dono) MON[dono] = tt;
+  const seat = new THREE.Vector3(0, 0, 0.95).applyAxisAngle(new THREE.Vector3(0, 1, 0), giro).add(g.position);
+  return {seat, face: giro + Math.PI, g};
+}
+function estante(x, z, giro = 0) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = giro;
+  g.add(malha(B(2.2, 2.2, 0.45), mat(0x7a5536), 0, 1.1, 0));
+  const cores = [0xc0392b, 0x2c6fbb, 0x27ae60, 0xf1c40f, 0x8e44ad, 0xe67e22, 0x16a085];
+  for (let p = 0; p < 4; p++) for (let i = 0; i < 9; i++)
+    g.add(malha(B(0.16, 0.36 + Math.random() * 0.1, 0.32), mat(cores[(i + p) % cores.length]), -0.9 + i * 0.22, 0.35 + p * 0.52, 0.06));
+  scene.add(g);
+}
+function planta(x, z, s = 1) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s);
+  g.add(malha(new THREE.CylinderGeometry(0.28, 0.22, 0.5, 14), mat(0xb5653d), 0, 0.25, 0));
+  for (let i = 0; i < 7; i++) {
+    const f = malha(new THREE.SphereGeometry(0.26, 10, 8), mat(0x2f8f4e), Math.cos(i) * 0.18, 0.75 + (i % 3) * 0.22, Math.sin(i) * 0.18);
+    f.scale.set(1, 1.5, 0.6); f.rotation.z = Math.cos(i * 2) * 0.5; g.add(f);
+  }
+  scene.add(g);
+}
+function quadroParede(x, z, w, h, giro = 0) {   // quadro com canvas
+  const q = {c: document.createElement("canvas")}; q.c.width = 1024; q.c.height = 512;
+  q.g = q.c.getContext("2d"); q.t = new THREE.CanvasTexture(q.c); q.t.colorSpace = THREE.SRGBColorSpace;
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = giro;
+  g.add(malha(B(w + 0.2, h + 0.2, 0.08), mat(0x8c8c8c), 0, 2.2, 0));
+  g.add(malha(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({map: q.t, roughness: 0.6}), 0, 2.2, 0.05, false));
+  scene.add(g); return q;
+}
+
+const EST = {};
+// DIRETORIA (-20..-10, norte)
+EST.dora = mesa(-17, -10.2, "dora", 0, 2, 0x5b3a29);
+EST.davi = mesa(-13, -10.2, "davi", 0, 2, 0x5b3a29);
+const quadro = quadroParede(-15, N0 + 0.2, 5.2, 2.2);
+EST.dora.quadro = {pos: V(-15.8, -11.4), face: Math.PI};
+EST.davi.janela = {pos: V(-11.2, -12.2), face: Math.PI};
+{ const mt = malha(new THREE.CylinderGeometry(0.85, 0.85, 0.07, 28), mat(0x3b2b20), -15, 0.74, -5.8); scene.add(mt);
+  scene.add(malha(new THREE.CylinderGeometry(0.1, 0.18, 0.74), mat(0x2d2f33), -15, 0.37, -5.8));
+  const g = new THREE.Group(); scene.add(g);
+  cadeira(g, -15, -6.95, 0x6b2a2a, Math.PI); cadeira(g, -15, -4.65, 0x6b2a2a, 0); }
+planta(-19.2, -12.2, 1.2); planta(-10.8, -4.2, 1);
+// PESQUISA & ROTEIRO (-10..0, norte)
+EST.paulo = mesa(-7.5, -10.2, "paulo", 0, 2);
+EST.bia = mesa(-2.5, -10.2, "bia", 0, 2);
+estante(-9.0, -12.5);
+EST.paulo.estante = {pos: V(-9.0, -11.7), face: Math.PI};
+{ const mapa = texto("PAUTAS · GRINGA → CANAIS", 4.2, 1.4, {fundo: "#f4efe3", cor: "#203040", fonte: "bold 40px system-ui", cw: 1024, ch: 340, brilho: 0.25});
+  mapa.position.set(-5, 2.3, N0 + 0.16); scene.add(mapa);
+  const globo = malha(new THREE.SphereGeometry(0.32, 20, 16), mat(0x2f7fb8), -5, 1.15, -6.5); scene.add(globo);
+  scene.add(malha(new THREE.CylinderGeometry(0.05, 0.25, 0.8), mat(0x6c5841), -5, 0.4, -6.5)); }
+planta(-0.8, -12.2, 1.1);
+// SALA DOS JUÍZES (0..10, norte): mesa longa, cadeiras no lado sul, Júlia na cabeceira, Vitor na mesa de vídeo
+const JT = new THREE.Group(); JT.position.set(5.2, 0, -9.8); scene.add(JT);
+JT.add(malha(B(5.6, 0.08, 1.4), mat(0x8a6a4b), 0, 0.76, 0));
+for (const [a, b] of [[-2.6, -0.55], [2.6, -0.55], [-2.6, 0.55], [2.6, 0.55]]) JT.add(malha(B(0.08, 0.76, 0.08), mat(0x2d2f33), a, 0.38, b));
+for (let i = 0; i < 8; i++) JT.add(malha(B(0.42, 0.01, 0.3), mat(0xfaf6ee), -2.3 + i * 0.66, 0.81, (i % 2 ? 0.25 : -0.25)));
+const JUIZ_LUG = [];
+for (const dx of [-1.8, -0.6, 0.6, 1.8]) {
+  const p = V(5.2 + dx, -8.55);
+  const g = new THREE.Group(); scene.add(g); cadeira(g, p.x, p.z, 0x4a3b5c);
+  JUIZ_LUG.push({seat: p, face: Math.PI});
+}
+EST.julia = {seat: V(8.7, -9.8), face: -Math.PI / 2};
+{ const g = new THREE.Group(); scene.add(g); cadeira(g, 8.7, -9.8, 0x6c3483, Math.PI / 2); }
+EST.vitor = mesa(1.6, -5.6, "vitor", 0, 3);
+planta(0.8, -12.2, 1.1); planta(9.2, -12.2, 1);
+// SALA DO RENDER (10..20, norte): racks com LEDs, mesa do Renato, barra de progresso sobre a porta
+const LEDS = [];
+for (let r = 0; r < 4; r++) {
+  const rx = 12.2 + r * 2.2, rz = -12.1;
+  scene.add(malha(B(1.6, 2.4, 1.1), mat(0x1b1e23, {metalness: 0.4}), rx, 1.2, rz));
+  for (let i = 0; i < 6; i++) {
+    const l = malha(B(1.3, 0.06, 0.04), new THREE.MeshStandardMaterial({color: 0x123322, emissive: 0x2bff88, emissiveIntensity: 0.05}),
+      rx, 0.45 + i * 0.34, rz + 0.57, false);
+    scene.add(l); LEDS.push(l);
+  }
+}
+EST.renato = mesa(17.6, -6.2, "renato", 0, 3, 0x40474f);
+EST.renato.rack = {pos: V(14.4, -10.6), face: Math.PI};
+const barraFundo = malha(B(4.4, 0.32, 0.05), mat(0x222222), 15, 3.55, -CZ + 0.2, false);
+const barraFill = malha(B(4.36, 0.26, 0.06), new THREE.MeshStandardMaterial({color: 0x2bd97a, emissive: 0x18a85a, emissiveIntensity: 0.8}), 15, 3.55, -CZ + 0.24, false);
+scene.add(barraFundo, barraFill);
+const rotRender = new CSS2DObject(Object.assign(document.createElement("div"), {className: "rotulo3d", textContent: "Render — livre"}));
+rotRender.position.set(15, 4.2, -CZ); scene.add(rotRender);
+// RECEPÇÃO (-20..-10, sul): balcão, logo grande da empresa, sofá de espera
+{ const g = new THREE.Group(); g.position.set(-15, 0, 8.4); scene.add(g);
+  g.add(malha(B(4, 1.1, 0.9), mat(0xf2efe9), 0, 0.55, 0)); g.add(malha(B(4.2, 0.08, 1.1), mat(0xff3b5c), 0, 1.12, 0));
+  const lg = texto(EMPRESA, 7.6, 1.2, {fundo: "#14171c", cor: "#ffffff", fonte: "900 80px system-ui", cw: 1024, ch: 160, brilho: 0.8});
+  lg.position.set(-15, 2.4, S1 - 0.16); lg.rotation.y = Math.PI; scene.add(lg);
+  const play = malha(B(0.9, 0.62, 0.06), new THREE.MeshStandardMaterial({color: 0xff3b5c, emissive: 0xff3b5c, emissiveIntensity: 0.6}), -15, 3.45, S1 - 0.18, false);
+  scene.add(play); }
+EST.recepcao = {seat: V(-15, 9.5), face: Math.PI};
+planta(-19.2, 12.2, 1.3); planta(-10.8, 12.2, 1.1); planta(-11.2, 2.4, 1);
+// COPA (-10..0, sul)
+scene.add(malha(B(3.2, 0.95, 0.7), mat(0x7b5a3c), -6.5, 0.48, 12.3));
+scene.add(malha(B(0.55, 0.7, 0.45), mat(0x2b2b2b, {metalness: 0.5}), -6.5, 1.3, 12.3));
+scene.add(malha(B(0.2, 0.08, 0.2), new THREE.MeshStandardMaterial({color: 0xff4040, emissive: 0xff2020, emissiveIntensity: 1}), -6.5, 1.5, 12.06, false));
+scene.add(malha(B(0.9, 1.8, 0.7), mat(0xdfe3e6, {metalness: 0.3}), -8.6, 0.9, 12.3));   // geladeira
+const sofa = new THREE.Group(); sofa.position.set(-2.3, 0, 9.4); sofa.rotation.y = Math.PI / 2; scene.add(sofa);
+sofa.add(malha(B(3.4, 0.45, 1), mat(0x3e6b8a), 0, 0.3, 0)); sofa.add(malha(B(3.4, 0.7, 0.3), mat(0x3e6b8a), 0, 0.7, 0.38));
+scene.add(malha(new THREE.CylinderGeometry(0.6, 0.6, 0.06, 20), mat(0x9b6b43), -4.4, 0.45, 9.4));
+scene.add(malha(new THREE.CylinderGeometry(0.06, 0.06, 0.45), mat(0x2d2f33), -4.4, 0.22, 9.4));
+const COPA = [{seat: V(-7.4, 11.2), face: 0.3, pose: "cafe"}, {seat: V(-5.6, 11.2), face: -0.3, pose: "cafe"},
+  {seat: V(-7.0, 9.8), face: 0.6, pose: "cafe"}, {seat: V(-5.6, 9.9), face: -0.6, pose: "cafe"},
+  {seat: V(-8.4, 8.6), face: 0.9, pose: "cafe"}];
+const SOFA = [8.2, 9.4, 10.6].map(z => ({seat: V(-2.45, z), face: -Math.PI / 2, pose: "sofa"}));
+planta(-9.2, 2.4, 1); planta(-0.8, 12.2, 1.1);
+// SALA DE REVISÃO (0..10, sul): telão na parede sul, poltronas
+const telao = telaTex(256, 144);
+scene.add(malha(B(4.6, 2.5, 0.1), mat(0x111111), 5, 2.0, S1 - 0.2));
+const telaoM = new THREE.MeshStandardMaterial({map: telao.t, emissive: 0xffffff, emissiveMap: telao.t, emissiveIntensity: 0.85});
+{ const tl = malha(new THREE.PlaneGeometry(4.4, 2.3), telaoM, 5, 2.0, S1 - 0.27, false); tl.rotation.y = Math.PI; scene.add(tl); }
+for (const z of [6.2, 7.6]) for (const x of [1.4, 2.6, 7.4, 8.6]) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g);
+  g.add(malha(B(0.9, 0.42, 0.8), mat(0x6b2030), 0, 0.3, 0)); g.add(malha(B(0.9, 0.7, 0.18), mat(0x6b2030), 0, 0.65, -0.35));
+}
+EST.rita = {seat: V(5, 10.4), face: 0, stand: true};
+scene.add(malha(B(1.4, 1.0, 0.6), mat(0x5d6d7e), 5, 0.5, 11.3));
+planta(0.8, 12.2, 1); planta(9.2, 12.2, 1);
+// EXPEDIÇÃO (10..20, sul): porta ENTREGAS, pilha de caixas do dia, prateleiras
+function porta(x, z, giro, txt) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = giro;
+  g.add(malha(B(1.8, 2.6, 0.12), mat(0x7a5634), 0, 1.3, 0));
+  g.add(malha(new THREE.SphereGeometry(0.06), mat(0xe6c76a, {metalness: 0.8}), 0.65, 1.2, 0.08));
+  const pl = texto(txt, 1.6, 0.4, {fundo: "#1e824c", fonte: "bold 50px system-ui"}); pl.position.set(0, 2.95, 0.08); g.add(pl);
+  scene.add(g);
+}
+porta(-20.05, 7, Math.PI / 2, "ENTRADA");
+porta(20.05, 7, -Math.PI / 2, "ENTREGAS");
+const ENTRADA = V(-19.3, 7);
+const ENTREGA = V(19.2, 7);
+const PILHA = [];
+for (let i = 0; i < 12; i++) {
+  const c = malha(B(0.6, 0.45, 0.6), mat(0xc89b5e), 16.6 + (i % 3) * 0.68, 0.23 + Math.floor(i / 6) * 0.46, 11.6 - (Math.floor(i / 3) % 2) * 0.68);
+  c.visible = false; scene.add(c); PILHA.push(c);
+}
+for (const x of [11.5, 13.7]) { scene.add(malha(B(2, 2.2, 0.5), mat(0x8a8f96, {metalness: 0.4}), x, 1.1, 12.5)); }
+planta(19.2, 2.4, 1);
+// relógio no corredor
+const relo = {c: document.createElement("canvas")}; relo.c.width = relo.c.height = 256; relo.g = relo.c.getContext("2d");
+relo.t = new THREE.CanvasTexture(relo.c); relo.t.colorSpace = THREE.SRGBColorSpace;
+{ const r = malha(new THREE.CircleGeometry(0.55, 32), new THREE.MeshStandardMaterial({map: relo.t}), -19.86, 2.4, 0, false); r.rotation.y = Math.PI / 2; scene.add(r); }
+
+// ------------------------------------------------------------------ funcionários
+class Pessoa {
+  constructor(f, extra = false) {
+    this.id = f.id; this.extra = extra;
+    this.root = new THREE.Group();
+    this.corpo = new THREE.Group();
+    this.root.add(this.corpo);
+    const pele = mat(f.pele), roupa = mat(f.roupa), calca = mat(0x2f3440), cabelo = mat(f.cabelo);
+    const parte = (geo, m, x, y, z) => { const me = malha(geo, m, x, y, z); me.userData.pid = f.id; return me; };
+    this.pernaE = new THREE.Group(); this.pernaE.position.set(-0.12, 0.82, 0);
+    this.pernaD = new THREE.Group(); this.pernaD.position.set(0.12, 0.82, 0);
+    for (const p of [this.pernaE, this.pernaD]) {
+      p.add(parte(new THREE.CapsuleGeometry(0.085, 0.6, 4, 8), calca, 0, -0.4, 0));
+      p.add(parte(B(0.16, 0.09, 0.28), mat(0x1b1b1b), 0, -0.8, 0.05));
+      this.corpo.add(p);
+    }
+    this.corpo.add(parte(new THREE.CapsuleGeometry(0.22, 0.42, 6, 12), roupa, 0, 1.18, 0));
+    this.corpo.add(parte(new THREE.SphereGeometry(0.2, 18, 14), pele, 0, 1.68, 0));
+    const ca = parte(new THREE.SphereGeometry(0.212, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.55), cabelo, 0, 1.7, -0.01);
+    ca.rotation.x = -0.25; this.corpo.add(ca);
+    for (const x of [-0.07, 0.07]) this.corpo.add(parte(new THREE.SphereGeometry(0.025, 8, 6), mat(0x111111), x, 1.7, 0.18));
+    this.bracoE = new THREE.Group(); this.bracoE.position.set(-0.3, 1.42, 0);
+    this.bracoD = new THREE.Group(); this.bracoD.position.set(0.3, 1.42, 0);
+    for (const b of [this.bracoE, this.bracoD]) {
+      b.add(parte(new THREE.CapsuleGeometry(0.065, 0.42, 4, 8), roupa, 0, -0.27, 0));
+      b.add(parte(new THREE.SphereGeometry(0.07, 10, 8), pele, 0, -0.56, 0));
+      this.corpo.add(b);
+    }
+    this.xicara = malha(new THREE.CylinderGeometry(0.06, 0.05, 0.12, 10), mat(0xffffff), 0, -0.62, 0.08);
+    this.xicara.visible = false; this.bracoD.add(this.xicara);
+    this.caixa = malha(B(0.55, 0.42, 0.45), mat(0xc89b5e), 0, 1.15, 0.45);
+    this.caixa.visible = false; this.corpo.add(this.caixa);
+    this.anel = new THREE.Mesh(new THREE.RingGeometry(0.42, 0.52, 32), new THREE.MeshBasicMaterial({color: 0x9aa0a6, transparent: true, opacity: 0.85}));
+    this.anel.rotation.x = -Math.PI / 2; this.anel.position.y = 0.03; this.root.add(this.anel);
+    this.div = document.createElement("div"); this.div.className = "tag";
+    this.div.innerHTML = `<span class="bl"></span><span class="nm"></span>`;
+    this.tag = new CSS2DObject(this.div); this.tag.position.set(0, 2.15, 0); this.root.add(this.tag);
+    this.exDiv = Object.assign(document.createElement("div"), {className: "ex", textContent: "!"});
+    this.ex = new CSS2DObject(this.exDiv); this.ex.position.set(0.35, 2.05, 0); this.ex.visible = false; this.root.add(this.ex);
+    this.path = []; this.vel = 2.6; this.pose = "pe"; this.alvoKey = ""; this.face = 0; this.dados = f; this.fase = Math.random() * 10;
+    scene.add(this.root);
+  }
+  set(f) {
+    this.dados = f;
+    const c = COR[f.estado] || COR.livre;
+    this.anel.material.color.set(c);
+    this.div.style.setProperty("--c", c);
+    this.div.classList.toggle("travado", f.estado === "travado");
+    this.div.querySelector(".nm").textContent = f.nome;
+    const bl = this.div.querySelector(".bl");
+    const mostra = f.estado !== "livre" && f.txt;
+    bl.innerHTML = mostra ? `${esc(f.txt.length > 70 ? f.txt.slice(0, 68) + "…" : f.txt)}${f.filme ? `<small>🎬 ${esc(f.filme)}</small>` : ""}` : "";
+    this.exDiv.style.display = f.estado === "travado" ? "block" : "none";
+    this.ex.visible = f.estado === "travado";
+  }
+  // rota: sai da sala pela porta, anda pelo corredor (z = 0) e entra na sala de destino pela porta dela
+  irPara(dest, pose, face, key) {
+    if (key === this.alvoKey) return;
+    this.alvoKey = key; this.poseFinal = pose; this.faceFinal = face;
+    // caminho em L: sai pela frente do lugar atual, anda em linhas retas e chega por trás da cadeira (não atravessa mesa)
+    const a = this.root.position.clone(), sa = salaDe(a), sb = salaDe(dest), pts = [];
+    // no sofá a pessoa entra e sai pela FRENTE (atrás dela é o encosto); no resto, por trás (a mesa fica na frente)
+    const ponta = (pos, f, ps) => ps === "sofa" ? pos.clone().add(frente(f).multiplyScalar(0.9)) : aprox(pos, f);
+    const exA = sa && !this.path.length ? ponta(a, this.root.rotation.y, this.pose) : a.clone();
+    const apB = sb ? ponta(dest, face, pose) : dest.clone();
+    if (sa && sb && sa === sb) pts.push(exA, V(apB.x, exA.z), apB);
+    else {
+      if (sa) pts.push(exA, V(exA.x, sa.dentro.z), sa.dentro.clone(), V(sa.portaX, 0)); else pts.push(V(a.x, 0));
+      if (sb) pts.push(V(sb.portaX, 0), sb.dentro.clone(), V(apB.x, sb.dentro.z), apB); else pts.push(V(dest.x, 0));
+    }
+    pts.push(dest.clone());
+    this.path = pts.filter((p, i) => i === pts.length - 1 || p.distanceTo(i ? pts[i - 1] : a) > 0.3);
+    this.pose = "anda";
+  }
+  update(dt, t) {
+    const r = this.root;
+    if (this.path.length) {
+      const alvo = this.path[0];
+      const d = new THREE.Vector3().subVectors(alvo, r.position); d.y = 0;
+      const dist = d.length();
+      if (dist < 0.06) { this.path.shift(); if (!this.path.length) this.pose = this.poseFinal; }
+      else {
+        r.position.addScaledVector(d.normalize(), Math.min(dist, this.vel * dt));
+        r.rotation.y = lerpAng(r.rotation.y, Math.atan2(d.x, d.z), Math.min(1, dt * 10));
+      }
+    } else if (this.faceFinal !== undefined) {
+      r.rotation.y = lerpAng(r.rotation.y, this.faceFinal, Math.min(1, dt * 6));
+    }
+    this.anima(t + this.fase, dt);
+  }
+  anima(t, dt) {
+    const P = this.pose, s = Math.sin;
+    let pe = 0, pd = 0, be = 0, bd = 0, bdz = 0, bez = 0, y = 0;
+    this.xicara.visible = P === "cafe" || P === "sofa";
+    this.caixa.visible = this.carrega === true;
+    if (P === "anda") {
+      pe = s(t * 9) * 0.6; pd = -pe; be = -pe * 0.7; bd = pe * 0.7; y = Math.abs(s(t * 9)) * 0.05;
+      if (this.carrega) { be = bd = -1.25; }
+    } else if (P === "senta" || P === "sofa") {
+      y = -0.36; pe = pd = -1.45;
+      if (P === "senta") { be = -1.15 + s(t * 14) * 0.08; bd = -1.15 - s(t * 16) * 0.08; }
+      else { be = -0.2; bd = -1.4 + Math.max(0, s(t * 0.7)) * -0.7; }
+    } else if (P === "cafe") {
+      bd = -1.35 + Math.max(0, s(t * 0.8)) * -0.75; be = 0.05; y = s(t * 1.6) * 0.012;
+    } else if (P === "acena") {
+      bdz = 2.7 + s(t * 7) * 0.35; be = 0.1;
+    } else if (P === "estante") {
+      bd = -2.4 + s(t * 2) * 0.2; be = -0.4;
+    } else if (P === "telao" || P === "quadro") {
+      bd = -1.2 + s(t * 1.3) * 0.25; be = -0.1;
+    } else {
+      y = s(t * 1.6) * 0.012; be = s(t * 1.1) * 0.05; bd = -be;
+    }
+    const k = Math.min(1, dt * 10);
+    this.pernaE.rotation.x += (pe - this.pernaE.rotation.x) * k;
+    this.pernaD.rotation.x += (pd - this.pernaD.rotation.x) * k;
+    this.bracoE.rotation.x += (be - this.bracoE.rotation.x) * k;
+    this.bracoD.rotation.x += (bd - this.bracoD.rotation.x) * k;
+    this.bracoD.rotation.z += (bdz - this.bracoD.rotation.z) * k;
+    this.bracoE.rotation.z += (bez - this.bracoE.rotation.z) * k;
+    this.corpo.position.y += (y - this.corpo.position.y) * k;
+  }
+}
+const frente = f => V(Math.sin(f), Math.cos(f));
+const aprox = (pos, face) => pos.clone().sub(frente(face).multiplyScalar(0.9));   // ponto atrás de quem está virado para `face`
+const lerpAng = (a, b, k) => { let d = ((b - a + Math.PI) % (Math.PI * 2)) - Math.PI; if (d < -Math.PI) d += Math.PI * 2; return a + d * k; };
+
+const pessoas = {};
+function lugarLivre(lista, tipo, id) {
+  const ocup = new Set(Object.values(pessoas).filter(p => p.id !== id && p.lugar && p.lugar.tipo === tipo).map(p => p.lugar.i));
+  const livres = lista.map((_, i) => i).filter(i => !ocup.has(i));
+  const i = livres.length ? livres[Math.floor(Math.random() * livres.length)] : Math.floor(Math.random() * lista.length);
+  return {tipo, i, ...lista[i]};
+}
+
+// para onde cada um vai, pelo estado real (com pequenas idas e vindas dentro da sala enquanto trabalha)
+function destino(p, f, agora) {
+  const st = EST[f.id];
+  if (f.estado === "trabalhando" && st) {
+    p.carrega = false;
+    const ciclo = Math.floor((agora + p.fase * 7) / 25) % 4;
+    if (f.id === "paulo" && ciclo === 3) return ["estante", st.estante.pos, "estante", st.estante.face];
+    if (f.id === "renato" && ciclo % 2 === 1) return ["rack", st.rack.pos, "pe", st.rack.face];
+    if (f.id === "dora" && ciclo === 2) return ["quadro", st.quadro.pos, "quadro", st.quadro.face];
+    if (f.id === "davi" && ciclo === 1) return ["janela", st.janela.pos, "pe", st.janela.face];
+    if (st.stand) return ["est", st.seat, "telao", st.face];
+    return ["est", st.seat, "senta", st.face];
+  }
+  if (f.estado === "travado" && st) {
+    p.carrega = false;
+    return ["trava", st.seat.clone().add(V(0.9, 0.6)), "acena", 0];
+  }
+  if (f.estado === "entregando") {
+    const ciclo = Math.floor(agora / 10) % 2;
+    p.carrega = ciclo === 0;
+    return ciclo === 0 ? ["entrega", ENTREGA, "pe", Math.PI / 2] : ["volta", EST.renato.seat, "senta", EST.renato.face];
+  }
+  p.carrega = false;
+  if (f.estado === "esperando") {
+    if (!p.lugar || p.lugar.tipo !== "copa") p.lugar = lugarLivre(COPA, "copa", p.id);
+    return ["copa" + p.lugar.i, p.lugar.seat, "cafe", p.lugar.face];
+  }
+  if (!p.lugar || agora > (p.troca || 0)) {
+    p.troca = agora + 35 + Math.random() * 45;
+    p.lugar = Math.random() < 0.5 ? lugarLivre(SOFA, "sofa", p.id) : lugarLivre(COPA, "copa", p.id);
+  }
+  return [p.lugar.tipo + p.lugar.i, p.lugar.seat, p.lugar.tipo === "sofa" ? "sofa" : "cafe", p.lugar.face];
+}
+
+// juízes chamados na hora: entram pela ENTRADA, atravessam o corredor, sentam na Sala dos Juízes e saem
+const juizes = [];
+const JUIZ_CORES = [["#7d3c98", "#2b1d0e", "#e0ac69"], ["#1f618d", "#5a3825", "#f1c27d"], ["#117a65", "#111111", "#c68642"], ["#a04000", "#3b2314", "#ffdbac"]];
+function atualizaJuizes(lista) {
+  for (let i = 0; i < 4; i++) {
+    const a = lista[i];
+    let j = juizes[i];
+    if (a && !j) {
+      const [r, c, k] = JUIZ_CORES[i];
+      j = new Pessoa({id: "juiz" + i, nome: "Juiz " + (i + 1), roupa: r, cabelo: c, pele: k}, true);
+      j.root.position.copy(ENTRADA); juizes[i] = j; pessoas[j.id] = j;
+    }
+    if (j) {
+      if (a) {
+        j.saindo = false;
+        j.set({nome: "Juiz " + (i + 1), estado: "trabalhando", txt: a.txt, filme: a.filme});
+        const l = JUIZ_LUG[i]; j.irPara(l.seat, "senta", l.face, "mesa");
+      } else if (!j.saindo) {
+        j.saindo = true; j.set({nome: "Juiz " + (i + 1), estado: "livre", txt: "", filme: ""});
+        j.irPara(ENTRADA, "pe", -Math.PI / 2, "sai");
+      }
+    }
+  }
+}
+
+// ------------------------------------------------------------------ telas, quadro, relógio
+function pintaTela(tt, on, cor) {
+  const {g, c} = tt;
+  g.fillStyle = on ? "#0f2236" : "#08090b"; g.fillRect(0, 0, c.width, c.height);
+  if (!on) { tt.t.needsUpdate = true; return; }
+  tt.off = (tt.off + 0.6) % 12;
+  for (let y = -12 + tt.off, i = 0; y < c.height; y += 7, i++) {
+    g.fillStyle = i % 5 === 0 ? cor : "rgba(120,200,255,.75)";
+    g.fillRect(6 + (i * 13) % 20, y, 30 + (i * 37) % (c.width - 50), 3);
+  }
+  tt.t.needsUpdate = true;
+}
+function pintaQuadro(d) {
+  const g = quadro.g;
+  g.fillStyle = "#f7f7f2"; g.fillRect(0, 0, 1024, 512);
+  g.fillStyle = "#1d4fa3"; g.font = "bold 44px 'Segoe Print','Comic Sans MS',cursive"; g.fillText("FILA", 40, 70);
+  g.fillStyle = "#1e824c"; g.fillText("ENTREGUES HOJE", 540, 70);
+  g.strokeStyle = "#ccc"; g.lineWidth = 3; g.beginPath(); g.moveTo(512, 30); g.lineTo(512, 480); g.stroke();
+  g.font = "28px 'Segoe Print','Comic Sans MS',cursive"; g.fillStyle = "#222";
+  const fila = d.fila || [];
+  if (!fila.length) g.fillText("nenhum pedido esperando", 40, 130);
+  fila.slice(0, 8).forEach((p, i) => {
+    const m = p.status === "na_fila" ? "⏸" : p.status === "esperando_voce" ? "✋" : "▶";
+    g.fillText(`${m} ${p.titulo.slice(0, 22)} · ${(p.etapa || p.status).slice(0, 14)}`, 40, 130 + i * 44);
+  });
+  (d.entregues || []).slice().reverse().slice(0, 8).forEach((e, i) => g.fillText(`✔ ${e.hora} ${e.slug.slice(0, 24)}`, 540, 130 + i * 44));
+  if (!(d.entregues || []).length) g.fillText("nada ainda", 540, 130);
+  quadro.t.needsUpdate = true;
+}
+function pintaRelogio() {
+  const g = relo.g, n = new Date();
+  g.fillStyle = "#fff"; g.beginPath(); g.arc(128, 128, 124, 0, 7); g.fill();
+  g.strokeStyle = "#333"; g.lineWidth = 8; g.stroke();
+  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; g.fillStyle = "#333"; g.fillRect(126 + Math.sin(a) * 100, 126 - Math.cos(a) * 100, 5, 5); }
+  const mao = (a, l, w) => { g.lineWidth = w; g.beginPath(); g.moveTo(128, 128); g.lineTo(128 + Math.sin(a) * l, 128 - Math.cos(a) * l); g.stroke(); };
+  g.strokeStyle = "#333";
+  mao((n.getHours() % 12 + n.getMinutes() / 60) / 12 * Math.PI * 2, 60, 9);
+  mao(n.getMinutes() / 60 * Math.PI * 2, 92, 6);
+  g.strokeStyle = "#c0392b"; mao(n.getSeconds() / 60 * Math.PI * 2, 100, 2);
+  relo.t.needsUpdate = true;
+}
+
+// ------------------------------------------------------------------ dados ao vivo
+let dados = null, selecionado = null;
+function aplica(d) {
+  dados = d;
+  for (const f of d.funcionarios) {
+    let p = pessoas[f.id];
+    if (!p) {
+      p = pessoas[f.id] = new Pessoa(f);
+      const st = EST[f.id];
+      p.root.position.copy(st ? st.seat : ENTRADA);
+    }
+    p.set(f);
+    const [key, pos, pose, face] = destino(p, f, d.agora);
+    p.irPara(pos, pose, face, key);
+  }
+  atualizaJuizes(d.ajudantes || []);
+  pintaQuadro(d);
+  const r = d.render;
+  const pct = r ? (r.pct ?? (r.fase === "acabamento" ? 92 : 4)) : 0;
+  barraFill.scale.x = Math.max(0.001, pct / 100);
+  barraFill.position.x = 15 - 2.18 * (1 - pct / 100);
+  rotRender.element.textContent = r ? `Render ${r.pct != null ? r.pct + "%" : ""} · ${r.filme || r.baia} · ${r.fase}` : "Render — livre";
+  PILHA.forEach((c, i) => c.visible = i < (d.entregues || []).length);
+  const g = d.gerente;
+  $("#tg").classList.toggle("on", g.ligado);
+  $("#tgtxt").textContent = g.ligado ? "Funcionários sozinhos: LIGADO" : "Funcionários sozinhos: desligado";
+  $("#cGer").textContent = g.vivo ? "gerente no escritório" : "gerente fora";
+  $("#cGer").classList.toggle("ruim", g.ligado && !g.vivo);
+  $("#cRen").textContent = r ? `render ${r.pct != null ? r.pct + "%" : r.fase}` : "render livre";
+  const rc = d.recursos;
+  $("#cDisco").textContent = `disco ${rc.disco_gb} GB`; $("#cDisco").classList.toggle("ruim", rc.disco_gb < 25);
+  $("#cYt").textContent = rc.yt.pausa_min ? `YouTube em pausa ${rc.yt.pausa_min} min` : `YouTube ${rc.yt.usadas}/${rc.yt.teto}`;
+  $("#cYt").classList.toggle("ruim", !!rc.yt.pausa_min);
+  $("#feed").innerHTML = (d.feed || []).map(e => `<div><time>${new Date(e.t * 1000).toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit"})}</time><b>${esc(e.quem)}</b> ${esc(e.txt)}${e.filme ? ` <span style="color:var(--mute)">(${esc(e.filme)})</span>` : ""}</div>`).join("")
+    || `<div style="color:var(--mute)">${g.ligado ? "esperando pedido novo no painel" : "funcionários desligados — os pedidos ficam com o Claude do chat"}</div>`;
+  if (selecionado) mostraFicha(selecionado);
+  if (tour.on) cartaoTour();
+}
+async function busca() {
+  try {
+    const r = await fetch("/api/escritorio", {cache: "no-store"});
+    if (r.ok) aplica(await r.json());
+  } catch (e) { /* painel reiniciando */ }
+}
+$("#tg").onclick = async () => {
+  const quer = !(dados && dados.gerente.ligado);
+  if (quer && !confirm("Ligar os funcionários sozinhos?\n\nEles vão pegar os pedidos do painel e produzir os filmes sem o chat, usando sua conta do Claude.")) return;
+  await fetch("/api/gerente", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ligado: quer})});
+  busca();
+};
+
+// ------------------------------------------------------------------ câmera, clique, salas e tour
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2();
+let voo = null;
+function voaPara(pos, alvo, vel = 1.1) { voo = {pos, alvo, t: 0, vel, p0: camera.position.clone(), a0: controls.target.clone()}; }
+function mostraFicha(id) {
+  const p = pessoas[id]; if (!p) return;
+  const f = p.dados, sala = salaDe(p.root.position);
+  $("#ficha").style.display = "block";
+  $("#fN").textContent = f.nome; $("#fC").textContent = (f.cargo || "chamado para julgar fotos") + (sala ? " · " + sala.nome : " · no corredor");
+  const e = $("#fE"); e.textContent = NOME_EST[f.estado] || f.estado; e.style.background = COR[f.estado] || COR.livre; e.style.color = "#111";
+  $("#fT").textContent = f.txt || ""; $("#fF").textContent = f.filme ? "🎬 " + f.filme : "";
+}
+function quemNaSala(s) {
+  return Object.values(pessoas).filter(p => salaDe(p.root.position) === s && !(p.extra && p.saindo));
+}
+function irSala(s, manual = true) {
+  if (manual) paraTour();
+  selecionado = null; $("#ficha").style.display = "none";
+  controls.autoRotate = false;
+  voaPara(s.cam.pos.clone(), s.cam.alvo.clone());
+  document.querySelectorAll("#salas .btn").forEach(b => b.classList.toggle("on", b.dataset.s === s.id));
+}
+$("#salas").innerHTML = `<span class="chip" style="background:none;padding-left:2px">Salas:</span>` +
+  SALAS.map(s => `<button class="btn" data-s="${s.id}">${esc(s.nome)}</button>`).join("");
+document.querySelectorAll("#salas .btn").forEach(b => b.onclick = () => irSala(SALAS.find(s => s.id === b.dataset.s)));
+
+const ORDEM_TOUR = ["recepcao", "diretoria", "pesquisa", "juizes", "render", "revisao", "copa", "expedicao"].map(id => SALAS.find(s => s.id === id));
+const tour = {on: false, i: 0, t: 0, pausa: false, DUR: 9};
+function cartaoTour() {
+  const s = ORDEM_TOUR[tour.i];
+  $("#tK").textContent = `${EMPRESA} · sala ${tour.i + 1} de ${ORDEM_TOUR.length}`;
+  $("#tH").textContent = s.nome; $("#tP").textContent = s.txt;
+  const gente = quemNaSala(s);
+  $("#tG").innerHTML = gente.length ? "Agora aqui: " + gente.map(p => `<b>${esc(p.dados.nome)}</b> — ${esc(p.dados.estado === "livre" ? "livre" : (p.dados.txt || NOME_EST[p.dados.estado] || ""))}`).join(" · ")
+    : "Ninguém nesta sala agora.";
+}
+function passoTour(i) {
+  tour.i = (i + ORDEM_TOUR.length) % ORDEM_TOUR.length; tour.t = 0;
+  irSala(ORDEM_TOUR[tour.i], false); cartaoTour();
+}
+function comecaTour() {
+  tour.on = true; tour.pausa = false; $("#tourCard").style.display = "block"; $("#tPausa").textContent = "⏸";
+  $("#bTour").textContent = "⏹ Parar tour"; passoTour(0);
+}
+function paraTour() {
+  if (!tour.on) return;
+  tour.on = false; $("#tourCard").style.display = "none"; $("#bTour").textContent = "🎬 Tour pelas salas";
+}
+$("#bTour").onclick = () => tour.on ? (paraTour(), voaPara(VISAO.pos.clone(), VISAO.alvo.clone())) : comecaTour();
+$("#tProx").onclick = () => passoTour(tour.i + 1);
+$("#tAnt").onclick = () => passoTour(tour.i - 1);
+$("#tPausa").onclick = () => { tour.pausa = !tour.pausa; $("#tPausa").textContent = tour.pausa ? "▶ continuar" : "⏸"; };
+$("#tFim").onclick = () => { paraTour(); voaPara(VISAO.pos.clone(), VISAO.alvo.clone()); };
+addEventListener("keydown", e => {
+  if (e.key === "Escape") { paraTour(); }
+  if (tour.on && e.key === "ArrowRight") passoTour(tour.i + 1);
+  if (tour.on && e.key === "ArrowLeft") passoTour(tour.i - 1);
+});
+
+renderer.domElement.addEventListener("click", ev => {
+  mouse.set(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1);
+  ray.setFromCamera(mouse, camera);
+  const hit = ray.intersectObjects(Object.values(pessoas).map(p => p.root), true).find(h => h.object.userData.pid);
+  if (hit) {
+    paraTour();
+    selecionado = hit.object.userData.pid;
+    const p = pessoas[selecionado];
+    const alvo = p.root.position.clone().add(V(0, 0, 1));
+    voaPara(alvo.clone().add(V(2.5, 4.5, 3.2)), alvo);
+    controls.autoRotate = false;
+    mostraFicha(selecionado);
+  } else { selecionado = null; $("#ficha").style.display = "none"; }
+});
+$("#bVisao").onclick = () => { paraTour(); selecionado = null; $("#ficha").style.display = "none";
+  document.querySelectorAll("#salas .btn").forEach(b => b.classList.remove("on")); voaPara(VISAO.pos.clone(), VISAO.alvo.clone()); };
+$("#bGira").onclick = () => { paraTour(); controls.autoRotate = !controls.autoRotate; };
+$("#bNomes").onclick = () => document.body.classList.toggle("semNomes");
+$("#hFeed").onclick = () => $("#lado").classList.toggle("fechado");
+addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight); labels.setSize(innerWidth, innerHeight);
+});
+
+// ------------------------------------------------------------------ laço
+const clock = new THREE.Clock();
+let acc = 0, accR = 0;
+function laco() {
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  for (const p of Object.values(pessoas)) p.update(dt, t);
+  for (const [i, j] of juizes.entries()) if (j && j.saindo && !j.path.length && j.root.position.distanceTo(ENTRADA) < 0.3) {
+    scene.remove(j.root); j.div.remove(); j.exDiv.remove(); delete pessoas[j.id]; juizes[i] = null;
+  }
+  acc += dt;
+  if (acc > 0.08 && dados) {
+    acc = 0;
+    for (const f of dados.funcionarios) if (MON[f.id]) pintaTela(MON[f.id], f.estado === "trabalhando", COR.trabalhando);
+    const rita = dados.funcionarios.find(f => f.id === "rita");
+    pintaTela(telao, !!(rita && rita.estado === "trabalhando"), "#ffd166");
+    const ativo = !!dados.render;
+    LEDS.forEach((l, i) => l.material.emissiveIntensity = ativo ? (Math.sin(t * 8 + i * 1.7) > 0 ? 2.2 : 0.3) : 0.05);
+  }
+  accR += dt; if (accR > 1) { accR = 0; pintaRelogio(); }
+  if (tour.on && !tour.pausa && !voo) {
+    tour.t += dt; $("#tBar").style.width = Math.min(100, tour.t / tour.DUR * 100) + "%";
+    if (tour.t >= tour.DUR) passoTour(tour.i + 1);
+  }
+  if (voo) {
+    voo.t = Math.min(1, voo.t + dt * voo.vel);
+    const k = voo.t * voo.t * (3 - 2 * voo.t);
+    camera.position.lerpVectors(voo.p0, voo.pos, k); controls.target.lerpVectors(voo.a0, voo.alvo, k);
+    if (voo.t >= 1) voo = null;
+  } else if (selecionado && pessoas[selecionado]) {
+    const alvo = pessoas[selecionado].root.position.clone().add(V(0, 0, 1));
+    controls.target.lerp(alvo, Math.min(1, dt * 3));
+  }
+  controls.update();
+  renderer.render(scene, camera);
+  labels.render(scene, camera);
+  requestAnimationFrame(laco);
+}
+pintaRelogio();
+await busca();
+$("#carregando").remove();
+laco();
+setInterval(busca, 2000);
+</script>
+<script>
+setTimeout(() => { const c = document.getElementById("carregando"); if (c) { c.remove(); document.getElementById("erro").style.display = "grid"; } }, 12000);
+</script>
+</body>
+</html>

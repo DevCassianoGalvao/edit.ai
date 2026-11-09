@@ -1,0 +1,257 @@
+Siga o "prompt 80 FOTOS 20 VIDEOS.md" anexado (está nesta mesma pasta mapa).
+
+ONDE ESTE ARQUIVO E O "80 FOTOS 20 VIDEOS" DIVERGIREM, VALE ESTE. Em especial:
+- NÃO faça as duas perguntas iniciais nem espere resposta: estão respondidas
+  logo abaixo.
+- NÃO abra o Remotion Studio para aprovação nem espere o meu "ok": a
+  conferência é pela folha de contato, e no fim você EXPORTA DIRETO.
+- A MISTURA É 80% FOTO / 20% VÍDEO, medida em SEGUNDOS DE TELA (não em número
+  de cortes) e sem contar as animações do Remotion. Tolerância: 15% a 25% de
+  vídeo. Menos que 15% é slideshow; mais que 25% vira outro filme e estoura o
+  tempo de colheita.
+- Vídeo pode vir do YouTube (trecho curto, sempre mudo) e dos bancos públicos
+  de vídeo que já estão na pasta (Wikimedia Commons e NASA). Foto continua
+  vindo de Commons e Openverse.
+- Não cole o "INSTRUCOES PADRAO.md" junto: é a versão antiga destas regras.
+
+RESPOSTAS JÁ DADAS — NÃO PARE PARA PERGUNTAR
+- Animações: SIM. Legendas: NÃO. (Se eu mudar de ideia, edito esta linha.)
+- Wikimedia Commons: o bancos.py já manda o contato (wikimedia_contact.txt) e
+  o token (wikimedia_token.txt) no User-Agent — use sempre esse caminho, na
+  BUSCA e no DOWNLOAD. Sem contato no UA o Commons devolve 429 em todo
+  download.
+- YouTube: use o cookies.txt que já está na pasta (youtube.py o encontra
+  sozinho). Se o YouTube começar a pedir "confirme que não é um robô", pare de
+  baixar vídeo, registre no data/decisions_log.md e complete o filme com o
+  vídeo do Commons/NASA + foto. Não invente outra fonte.
+- Qualquer outra dúvida no meio do caminho: escolha a opção mais conservadora,
+  registre no data/decisions_log.md e siga. Só pare para algo destrutivo FORA
+  da pasta mapa ou que custe dinheiro.
+
+PASTAS
+Tudo acontece na pasta mapa (C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\DarkEmpireCompleto\MAPA): roteiro.txt,
+audio.mp3 e legenda.srt novos já estão nela. ANTES DE COMEÇAR, mande para a
+Lixeira (não apague direto — o PC tem pouco espaço, eu esvazio) o material do
+filme anterior:
+  downloads/paragrafo*, downloads/partes.json, downloads/motion, downloads/video,
+  capcut/, plano.json, concat.txt, comando.txt, linha_do_tempo.json,
+  auto_relatorio.json, mapa.json, mapa.csv, *.log, qa/, qa_fotos/,
+  edicao/clips, edicao/segments, edicao/final_partes, edicao/base.mp4,
+  edicao/edicao.json, edicao/plano_edicao.json, edicao/clips_frames.json,
+  edicao/preview_*.mp4, edicao_remotion/out, edicao_remotion/public/bg,
+  video_final.mp4, capitulos_youtube.txt, data/.
+Preserve o que não depende do tema: todos os .py/.mjs/.tsx, node_modules/,
+cookies.txt, wikimedia_token.txt, wikimedia_contact.txt,
+downloads/_transcricoes e downloads/_cache_bancos.json.
+Confira a data de roteiro.txt, audio.mp3 e legenda.srt: os três têm que ser da
+mesma safra. Se algum for do filme anterior, pare e me diga.
+
+O QUE JÁ EXISTE — NÃO RECONSTRUA
+Foto: auto.py (--modelo → plano.json → auto.py), bancos.py (Wikimedia, NASA),
+servidor.py (Openverse), curadoria.py, clipcheck.py.
+VÍDEO (já está na pasta, só não estava sendo usado no filme só de fotos):
+- youtube.py: `buscar(q, num, minimo, maximo)` acha candidatos com filtro de
+  qualidade, e `baixar_trecho(video_id, pasta, nome, inicio, duracao)` baixa
+  SÓ o trecho. Nunca baixe o vídeo inteiro.
+- bancos.py: `wikimedia_videos(q, num)` e `nasa_videos(q, num)` (BANCOS_VIDEO),
+  com download direto e sem bloqueio.
+- sincronizar.py: `eh_video()`, `detectar_borda()` (tira a moldura preta do
+  reupload antes de reampliar) e `_renderizar_item()`, que já corta vídeo na
+  duração exata e dá loop se o clipe for curto.
+Sincronia e render: sincronizar.py → edicao/monta_edicao.py →
+edicao/render_clips.py → edicao_remotion/render_overlays.mjs →
+edicao/build_base.py → edicao/final_render.py → qa.py.
+
+O QUE PRECISA DE UM AJUSTE PEQUENO NO CÓDIGO (faça, é pouco)
+1. plano.json ganha, por parte, uma lista `video` com 1 a 3 frases de busca de
+   VÍDEO (em inglês, mesma regra de ancoragem das frases de foto), e no topo
+   `"video_alvo": 0.20`. Parte sem `video` fica só com foto.
+2. Um colhedor de vídeo (scripts/fetch_video.py, novo e curto): para cada parte
+   com `video`, busca no Commons/NASA primeiro e no YouTube depois, baixa de 8
+   a 12 s por clipe para downloads/video/parte_NN_*.mp4, confere com ffprobe
+   (≥1080p, duração certa, não é o vídeo inteiro) e grava
+   data/video_manifest.json com parte, arquivo, fonte, canal, URL, trecho
+   (início/fim) e licença.
+3. monta_edicao.py: item de vídeo é reconhecido por extensão; NÃO recebe
+   movimento de câmera (vídeo já se move), entra com a mesma cauda de 15
+   quadros e o mesmo crossfade, e conta na estatística de % de vídeo.
+4. render_clips.py: se o item for vídeo, renderize por
+   sincronizar._renderizar_item (que já faz detectar_borda + escala + corte +
+   loop); o motor `perspective` continua valendo só para foto.
+5. final_render.py e qa.py: nada muda, exceto imprimir a % de vídeo no fim.
+
+EDIÇÃO — ONDE O VÍDEO ENTRA
+O vídeo é tempero, não base. Ele existe para dar movimento REAL ao que a foto
+não mostra: geleira e nuvem correndo, mar, fogo, fumaça, multidão, máquina
+trabalhando, carro/trem/barco andando, gente caminhando, chuva, drone sobre o
+lugar do roteiro.
+- Cota: 15% a 25% do tempo de tela. Num filme de 30 min, algo entre 4min30 e
+  7min30 de vídeo.
+- Ritmo: mais ou menos 1 corte de vídeo a cada 60–90 s, de 4 a 8 s cada. NUNCA
+  dois cortes de vídeo seguidos, e nunca vídeo colado numa animação.
+- Gancho: nos primeiros 90 s pode entrar 1 (no máximo 2) corte de vídeo, e tem
+  que ser o melhor movimento do filme.
+- Vídeo SEMPRE MUDO. A narração é a única trilha.
+- Onde NÃO usar vídeo: objeto de museu, documento, retrato, mapa, qualquer
+  coisa que a foto mostra melhor parada. Foto com movimento de câmera ganha de
+  vídeo ruim.
+- Se a parte não tem vídeo honesto, ela fica só de foto. Buraco de vídeo é
+  melhor que vídeo do assunto errado — a cota é meta, não obrigação.
+
+MOTION GRAPHICS — DUAS CAMADAS, E VARIADAS
+O filme tem DOIS tipos de animação, e os dois têm que aparecer:
+A) TELA CHEIA (h264, com a foto do trecho desfocada ao fundo): título,
+   capítulo, número grande, lista, comparação "antes x depois", citação,
+   linha do tempo, mapa, e a cena-diagrama do assunto (a que explica o
+   mecanismo do vídeo). Uma a cada 45–90 s, 4 a 16 s cada, nunca duas
+   seguidas.
+B) SOBRE A IMAGEM (VP9 com alfa, composta pelo final_render.py): entra POR
+   CIMA da foto ou do vídeo, sem cobrir o assunto. Use de 2 a 4 a cada
+   minuto, de 3 a 6 s cada. Catálogo mínimo — implemente o que faltar em
+   edicao_remotion/src/components.tsx e registre em Root.tsx como OVERLAY:
+   - LowerThird: nome + função de quem a narração acabou de citar.
+   - PlaceTag: lugar + data, canto superior esquerdo.
+   - Callout: seta/linha fina apontando para um ponto do quadro, com um
+     rótulo curto ("aqui entrou a flecha", "o motor", "a rachadura").
+   - CircleHighlight: círculo/retângulo que desenha e pulsa sobre o detalhe.
+   - StatCorner: número pequeno com rótulo num canto (ex.: "3.210 m"),
+     contando quando for número grande.
+   - KineticLine: 3 a 6 palavras da própria narração entrando palavra a
+     palavra, no terço inferior.
+   - SourceStamp: fonte/ano do dado, discreto, por cima do canto de baixo.
+   - ProgressTimeline: barrinha com a data do trecho, para filme com muitos
+     saltos no tempo.
+REGRAS DOS MOTIONS
+- VARIE. Nunca repita o mesmo tipo de overlay duas vezes seguidas, e não use
+  o mesmo tipo mais de 3 vezes no filme inteiro sem trocar a entrada.
+- Entradas e saídas variadas: rise+fade, clip-path da esquerda, escala com
+  mola, wipe vertical, desenho de traço (stroke-dashoffset). Nada entra ou
+  sai sem animação, nada se move em linha reta constante.
+- No máximo UM overlay na tela por vez (dois só se forem em cantos opostos e
+  um deles for SourceStamp).
+- Área segura: 96 px de margem; nunca sobre o rosto, o objeto do trecho ou o
+  centro do quadro. Em foto vertical recortada, use o canto com menos
+  informação.
+- Overlay nunca entra dentro de animação de tela cheia nem a 0,7 s dela —
+  o gerar_plano_edicao.py já checa isso e falha se acontecer.
+- Custo: VP9 com alfa é lento (≈13 s por clipe curto). Se passar de ~25
+  overlays, renderize-os em paralelo por composição e, se ainda pesar, corte
+  os menos necessários — nunca corte a legibilidade.
+- O grade quente do final_render.py entra ANTES dos overlays: ou seja, o
+  overlay não recebe grão nem vinheta. Compense com sombra própria no texto.
+
+ORDEM DE BUSCA DAS FONTES
+FOTO
+1. Domínio público de agência pública (NASA, arquivos nacionais, Library of
+   Congress), quase sempre pelo Commons.
+2. Wikimedia Commons e Openverse em CC0, PDM, CC-BY ou CC-BY-SA (no Openverse
+   filtre na consulta: license_type=commercial,modification).
+VÍDEO
+1. Wikimedia Commons e NASA (bancos.wikimedia_videos / nasa_videos): licença
+   limpa, download direto, sem bloqueio. SEMPRE tente aqui primeiro.
+2. YouTube, trecho curto (youtube.py), só para o que não existe nos bancos:
+   drone, walking tour, material recente, lugar específico.
+NÃO use Bing, DuckDuckGo, Google, Serper, site de notícia nem banco pago.
+Tema fora dos EUA: ancore a busca no país do roteiro (cidade, região, moeda,
+placa, empresa real) — nada de imagem americana genérica.
+
+YOUTUBE E USO JUSTO
+Trecho curto, mudo, dentro de um documentário com narração original é o caso
+mais forte que existe. Mas uso justo é defesa, não permissão: o Content ID é
+automático e a reivindicação pode chegar mesmo num uso legítimo, e o remédio é
+contestar. Para eu contestar, preciso do canal e da URL de cada clipe —
+registre TODOS em data/attribution.md.
+- Agência de notícias e broadcaster reivindicam quase sempre: evite.
+- Drone e walking tour de canal pequeno quase nunca: prefira.
+- Marca de canal no quadro se CORTA (tire ~12% da borda e reajuste para 16:9
+  antes de escalar — cortar só a altura estica a imagem), não se aceita.
+- Rejeite como classe: canais de vídeo gerado por IA, canais de "arquivo" que
+  carimbam o quadro, compilação com locução, reação, e qualquer clipe com
+  texto grande queimado.
+
+LICENÇAS QUE NUNCA ENTRAM
+Creative Commons NC (NonCommercial) e ND (NoDerivatives), em foto E em vídeo.
+Canal monetizado é uso comercial, e recortar um trecho dentro de um filme é
+obra derivada. Isso é REGRA DE POOL (bancos.py/curadoria.py leem a licença),
+não lista de arquivos rejeitados. Sem licença legível = "unverified", e
+unverified não entra no filme final.
+
+QUALIDADE — FOTO E VÍDEO
+Foto: lado maior ≥ 1920 px, nada abaixo de 1600, ampliação máxima 1,3x, foto em
+pé só com recorte 16:9 limpo. Nunca barra preta nem fundo borrado.
+Vídeo: 1080p de verdade (não 720 esticado), sem marca d'água, sem texto
+queimado, sem rosto falando para a câmera, sem corte de edição dentro do
+trecho, sem zoom digital tremido. Trecho estável de 8 a 12 s baixado, usado de
+4 a 8 s.
+
+MOVIMENTO (SÓ NA FOTO)
+Motor `perspective` do render_clips.py (sub-pixel; substituiu o zoompan porque
+ele posiciona em pixel inteiro e deixava tremido). Alterne push-in, pull-out,
+pan horizontal e pan vertical; nunca o mesmo movimento em duas fotos seguidas;
+zoom no máximo 1,08; o movimento vai EM DIREÇÃO ao assunto. Vídeo não recebe
+movimento nenhum.
+
+REJEITE SEM PENSAR DUAS VEZES (vale para foto e para quadro de vídeo)
+Infográfico, gráfico, mapa de atlas alheio, flowchart, render 3D, imagem de IA,
+captura de tela, capa de livro, página escaneada, peça com régua de escala,
+selo/brasão/medalha, foto de produto, recriação moderna vestida de época,
+marca d'água, logo, URL no rodapé, texto estrangeiro dominando o quadro, foto
+de evento (cerimônia, discurso, desfile) no lugar do assunto, e colisão de
+nome (consulte LEIA-ME-imagens.md e a memória do projeto).
+
+CONFERÊNCIA ANTES DE EXPORTAR
+Folha de contato é o único juiz. Nesta ordem:
+1. Depois do auto.py: folha de TODAS as fotos.
+2. Depois do fetch_video.py: folha dos VÍDEOS — 3 quadros por clipe (início,
+   meio, fim), para pegar corte de edição, marca de canal e câmera tremida.
+3. Depois do build_base.py: 1 quadro do miolo de cada plano.
+4. Depois do final_render.py: 1 quadro a cada 20 s + 1 no meio de cada animação.
+ANTES de rejeitar por índice, confira que o número de itens da folha é IGUAL ao
+número de arquivos da lista: um arquivo truncado some da folha e desloca toda a
+numeração (já rejeitou 81 fotos erradas assim). Rejeitada vai para
+data/image_rejects.json E sai do pool. Repetição: no máximo 2 aparições por
+foto, nunca em partes vizinhas, 60 s de distância.
+
+RENDER — FFMPEG MONTA, REMOTION SÓ ANIMA
+1. `py edicao/render_clips.py` (foto com perspective, vídeo pelo
+   _renderizar_item; 6 processos).
+2. `node edicao_remotion/render_overlays.mjs` (tela cheia h264 crf 16; alfa VP9
+   só para rótulo sobre a imagem).
+3. `py edicao/build_base.py` (xfade em lotes de 40, 3 em paralelo, concat -c copy).
+4. `py edicao/final_render.py` (grade quente + vinheta + grão, overlays com
+   alfa, áudio a −14 LUFS, h264 preset fast crf 18). EM PARTES de ~2 min, 2 em
+   paralelo: render de uma vez só com todos os overlays abertos já travou o PC.
+   LEGENDAS: NÃO (flag --legenda desligada).
+Antes do render final: `py edicao/final_render.py --preview 0 90` + folha.
+Quando o render começar, me avise para fechar o Chrome.
+
+TRAVAS QUE IMPEDEM A ENTREGA
+qa.py com 0 falhas e 0 avisos. Quadros do base.mp4 iguais ao total da
+edicao.json. Duração do vídeo igual à do áudio. Loudness final medido com
+ebur128 em −14 LUFS (o ganho do filtro entrega ~−12,9: o final_render.py já
+aplica −1,1 dB). tsc --noEmit limpo. Nenhum clipe de vídeo com áudio na
+timeline. % de vídeo entre 15% e 25% — se ficar fora, me diga o número real e o
+motivo. Auditoria de chr(8) zerada; nada de ^ ou $ em regex de nome de arquivo
+(os arquivos têm prefixo numérico).
+
+MÁQUINA
+- Nunca mate python ou node pelo nome: outro projeto roda nesta máquina. Mate
+  só pela linha de comando.
+- Quem grava índice/cache mescla com o disco, nunca reescreve da memória.
+- PC com pouco espaço: clipes, segmentos e partes vão para a Lixeira depois que
+  o final passar no QA.
+
+COMUNICAÇÃO
+Em toda etapa longa, diga o que está rodando e quanto falta. Mantenha
+data/progress.md com a etapa atual e o próximo comando.
+
+ENTREGA
+EXPORTE DIRETO, SEM PREVIEW. Entregue video_final.mp4, capitulos_youtube.txt,
+data/attribution.md (licença e autor de cada foto; canal e URL de cada clipe de
+vídeo; quantas estão "unverified" EM DESTAQUE; bloco de créditos BY/BY-SA
+pronto), data/visual_plan.md (com a coluna foto/vídeo e a % final),
+data/decisions_log.md, data/scene_review_log.md, data/alignment_report.md e
+três miniaturas no idioma do roteiro testadas a 210 px.
+MINIATURA: o objeto do vídeo É a miniatura. Foto em força total, recortada para
+o objeto encher o quadro; no máximo DUAS palavras num canto vazio, sem cobrir o
+objeto; sem faixa. A foto tem que estar no filme e ter licença verificada.

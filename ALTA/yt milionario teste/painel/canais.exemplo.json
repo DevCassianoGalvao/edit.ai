@@ -1,0 +1,25 @@
+{
+ "_como_usar": "Copie um item de 'canais' para canais.json (dentro de {\"canais\": [...]}), troque os dados pelos do SEU canal e reinicie o painel. voz_id/voz_nome vêm de: python scripts/darkplanner.py vozes. 'buscas_en' são 5-8 buscas em inglês do nicho (vídeos virais da gringa).",
+ "canais": [
+  {
+   "id": "meucanal",
+   "handle": "@meucanal",
+   "nome": "Meu Canal",
+   "idioma": "pt",
+   "pais": "Brasil",
+   "voz_id": "",
+   "voz_nome": "",
+   "duracao_min": 30,
+   "modelo_pedido": "",
+   "nicho": "descreva o nicho em uma frase (ex.: como vivem trabalhadores em ambientes extremos)",
+   "formula": "descreva a fórmula dos títulos que dão certo neste canal (peças que se repetem nos campeões)",
+   "buscas_en": [
+    "how they live documentary",
+    "inside life on a ship at sea",
+    "world's most dangerous jobs"
+   ],
+   "memoria": [],
+   "palavras": 5000
+  }
+ ]
+}

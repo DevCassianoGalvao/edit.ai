@@ -1,0 +1,59 @@
+{
+ "id": "dinamico-doc",
+ "nome": "dinamico doc",
+ "origem": "referencia",
+ "video": "video.mp4",
+ "escolhas": {
+  "legendas": "off",
+  "cor": "quente",
+  "textura": "leve",
+  "destaque": "dinamico",
+  "transicoes": "punch",
+  "ritmo": "ritmo",
+  "render": "alta"
+ },
+ "liga": {
+  "music": true,
+  "sfx": true,
+  "voz": true,
+  "arquivo_dark": false,
+  "paralaxe": true,
+  "mapa": true,
+  "mergulho": false,
+  "barras": false,
+  "nitidez": true
+ },
+ "desc": "Mistério antigo dinâmico: Google Earth, medidas em amarelo, recortes em papel, reconstruções 3D — 8 cortes/min, cor quente.",
+ "analise": "Documentário de mistérios antigos em ritmo alto (8,4 cortes/min, plano mediano de 4,8 s, quase sem fades para o preto), cor quente e limpa, sem textura de arquivo nem barras. A imagem explica o tempo todo: aproximações de Google Earth com o nome do lugar, medidas e setas em amarelo sobre a foto, títulos grandes do lugar sobre o plano, moedas e bustos recortados sobre fundo de papel, fotos inclinadas em espaço 3D e reconstruções/ilustrações de época. Trilha contínua sob a voz (−17 LUFS), sem legenda.",
+ "revisado": true,
+ "metricas": {
+  "ritmo": {
+   "cortes": 746,
+   "cortes_por_min": 8.4,
+   "plano_medio": 7.39,
+   "plano_mediano": 4.79,
+   "plano_p90": 15.63,
+   "pretos": 19,
+   "pretos_por_10min": 2.1
+  },
+  "imagem": {
+   "brilho": 94.0,
+   "contraste": 48.8,
+   "saturacao": 0.442,
+   "fracao_pb": 0.06,
+   "temperatura": 31.5,
+   "vinheta": 0.62,
+   "grao": 1.5,
+   "fracao_barras": 0.0,
+   "fracao_legenda": 0.08,
+   "fracao_letreiro": 0.03
+  },
+  "som": {
+   "lufs": -16.9,
+   "lra": 6.3,
+   "fracao_silencio": 0.003
+  }
+ },
+ "capa": "referencias/20261002-103039-dinamico-doc/capa.jpg",
+ "pasta": "referencias/20261002-103039-dinamico-doc"
+}

@@ -1,0 +1,19 @@
+# Dark Empire Videos — bibliotecas Python (versões do PC original em 07/10/2026)
+requests>=2.32
+pillow>=11
+numpy>=2.0
+scipy>=1.14
+psutil>=6
+av>=14
+yt-dlp>=2026.8.19
+faster-whisper>=1.2
+ctranslate2>=4.5
+onnxruntime>=1.20
+huggingface_hub>=0.30
+tokenizers>=0.20
+rembg>=2.0.60
+cryptography>=42   # licença da Sala (assinatura Ed25519 do passe)
+# transcrição na placa NVIDIA (sem NVIDIA dá para tirar estas 3 linhas: a transcrição roda na CPU, mais lenta)
+nvidia-cublas-cu12
+nvidia-cudnn-cu12
+nvidia-cuda-nvrtc-cu12

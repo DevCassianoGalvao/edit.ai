@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/app/editai512.png"><link rel="apple-touch-icon" href="/app/editai512.png">
+<title>Ativar o Edit.AI by Galvão</title>
+<style>
+  :root { --fundo:#0f0f10; --cartao:#18181b; --linha:#2a2a2e; --texto:#ededef; --dim:#9a9aa2; --ouro:#f4c430; --erro:#ff6b5b; --ok:#3ecf8e; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; background:radial-gradient(ellipse at 50% 20%, #1c1c20, var(--fundo) 70%);
+         color:var(--texto); font:16px/1.5 system-ui, "Segoe UI", sans-serif; padding:16px; }
+  .cx { width:100%; max-width:440px; background:var(--cartao); border:1px solid var(--linha); border-radius:16px; padding:32px 28px; }
+  .marca { font:700 12px/1 "Courier New", monospace; letter-spacing:4px; color:var(--dim); display:flex; align-items:center; gap:8px; }
+  .marca i { width:8px; height:8px; border-radius:50%; background:var(--erro); display:inline-block; }
+  h1 { font-size:26px; margin:14px 0 6px; letter-spacing:-.3px; }
+  p { color:var(--dim); margin:0 0 20px; }
+  label { font-size:13px; color:var(--dim); display:block; margin-bottom:6px; }
+  input { width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--linha); background:#0f0f11; color:var(--texto); font-size:16px; }
+  input:focus { outline:2px solid var(--ouro); outline-offset:1px; border-color:transparent; }
+  button { width:100%; margin-top:14px; padding:13px; border:0; border-radius:10px; background:var(--ouro); color:#111; font-weight:700; font-size:16px; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:wait; }
+  .msg { margin-top:16px; padding:12px 14px; border-radius:10px; font-size:14px; display:none; }
+  .msg.erro { display:block; background:#2a1513; color:#ffb3a8; border:1px solid #5a2620; }
+  .msg.ok { display:block; background:#10261c; color:#9ff0c9; border:1px solid #1f5a3e; }
+  .sup { margin-top:22px; font-size:13px; color:var(--dim); border-top:1px solid var(--linha); padding-top:14px; }
+</style>
+<link rel="icon" type="image/svg+xml" href="/app/editai.svg"><link rel="stylesheet" href="/app/space-grotesk.css"><link rel="stylesheet" href="/app/editai.css?v=7">
+</head>
+<body>
+  <main class="cx">
+    <img src="/app/editai512.png" alt="" width="84" height="84" style="display:block;margin:0 auto 14px;border-radius:18px">
+    <div class="marca" style="justify-content:center"><i></i>Edit.AI by Galvão</div>
+    <h1>Ative o Edit.AI by Galvão</h1>
+    <p id="motivo">Digite o e-mail que você usou na compra pela Kiwify. A ativação vale para este computador.</p>
+    <form id="f">
+      <label for="email">E-mail da compra</label>
+      <input id="email" type="email" required autocomplete="email" placeholder="voce@exemplo.com">
+      <button id="b" type="submit">Ativar</button>
+    </form>
+    <div id="m" class="msg" role="status"></div>
+    <div class="sup" id="sup"></div>
+  </main>
+<script>
+  const $ = (id) => document.getElementById(id);
+  fetch("/api/licenca").then(r => r.json()).then(e => {
+    if (e.ativa) { location.href = "/"; return; }
+    if (e.email) $("email").value = e.email;
+    if (e.motivo) $("motivo").textContent = e.motivo;
+    if (e.suporte) $("sup").textContent = "Precisa de ajuda? " + e.suporte;
+  }).catch(() => {});
+  $("f").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const m = $("m"), b = $("b");
+    b.disabled = true; b.textContent = "Ativando…"; m.className = "msg";
+    try {
+      const r = await fetch("/api/licenca/ativar", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: $("email").value }) }).then(x => x.json());
+      if (r.ok) {
+        m.className = "msg ok";
+        m.textContent = "Ativada! Licença " + (r.tipo === "vitalicio" ? "vitalícia" : "mensal") + (r.aviso ? ". " + r.aviso : "") + " Abrindo…";
+        setTimeout(() => location.href = "/", 1400);
+      } else { m.className = "msg erro"; m.textContent = r.motivo || "Não foi possível ativar."; }
+    } catch { m.className = "msg erro"; m.textContent = "O painel não respondeu. Ele está aberto?"; }
+    b.disabled = false; b.textContent = "Ativar";
+  });
+</script>
+</body>
+</html>

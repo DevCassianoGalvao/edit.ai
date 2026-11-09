@@ -308,9 +308,12 @@ main{min-height:0;position:relative}
 .cc .ca button:hover{background:var(--no);border-color:var(--no);color:#fff}
 .cc .ca button.u:hover{background:var(--ink);color:#111}
 
-.banner{position:fixed;left:50%;top:72px;transform:translateX(-50%);z-index:40;background:var(--paper);color:var(--paper-ink);border-radius:10px;padding:10px 12px 10px 16px;display:none;align-items:center;gap:12px;font-weight:600;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.banner{position:fixed;left:50%;top:72px;transform:translateX(-50%);z-index:40;max-width:min(620px,calc(100vw - 28px));background:rgba(28,24,39,.96);color:var(--ink);border:1px solid rgba(155,116,255,.32);border-radius:9px;padding:6px 8px 6px 12px;display:none;align-items:center;gap:9px;font:500 12px/1.35 var(--sans);box-shadow:0 8px 24px rgba(0,0,0,.32);backdrop-filter:blur(10px)}
 .banner.on{display:flex}
-.banner button{background:var(--paper-ink);color:var(--paper);padding:6px 12px;border-radius:7px;font-weight:700}
+.banner span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.banner button{flex:none;background:rgba(155,116,255,.16);color:#d6c7ff;border:1px solid rgba(155,116,255,.28);padding:5px 9px;border-radius:7px;font-size:11px;font-weight:650}
+.banner button:hover{background:rgba(155,116,255,.26)}
+@media(max-width:600px){.banner{top:58px;max-width:calc(100vw - 20px);gap:6px;padding:5px 6px 5px 9px}.banner span{max-width:calc(100vw - 130px)}}
 
 .keys{border-top:1px solid var(--line);background:var(--bg2);display:flex;align-items:center;gap:18px;padding:0 20px;font-size:12px;color:var(--mute);overflow:hidden;white-space:nowrap}
 .keys span{display:flex;gap:6px;align-items:center}
@@ -1397,15 +1400,21 @@ document.addEventListener("keydown", e => {
 });
 
 /* ================================================= mudanças vindas de fora (scripts) */
+let bannerLastAt = 0, bannerLastKind = "", bannerPending = null;
 setInterval(async () => {
   if (saving) return;
   let v; try { v = await api("/api/versao"); } catch { return; }
   const tl = ["timeline.json","clips.json"].some(k => S.L && v[k] !== S.ver[k]);
   const ph = ["photo_side.json","photo_pool.json"].some(k => S.F && v[k] !== S.ver[k]);
   if (tl || ph){
-    $("#bannerT").textContent = tl ? "O plano mudou fora do painel (fechar.py preparar rodou?)" : "As fotos mudaram fora do painel (juízes / script)";
+    const kind = tl ? "plano" : "fotos", now = Date.now();
+    if ($("#banner").classList.contains("on") || (kind === bannerLastKind && now - bannerLastAt < 60000)) return;
+    bannerLastAt = now; bannerLastKind = kind;
+    $("#bannerT").textContent = tl ? "Plano atualizado fora do painel." : "Fotos atualizadas fora do painel.";
     $("#banner").classList.add("on");
-    $("#bannerB").onclick = async () => { $("#banner").classList.remove("on"); if (ph) await loadFotos(S.tag); if (tl){ pause(); S.L = null; await loadLinha(); } };
+    $("#bannerB").textContent = "Atualizar";
+    $("#bannerB").onclick = async () => { $("#banner").classList.remove("on"); if (bannerPending) clearTimeout(bannerPending); bannerPending = null; if (ph) await loadFotos(S.tag); if (tl){ pause(); S.L = null; await loadLinha(); } };
+    bannerPending = setTimeout(() => { $("#banner").classList.remove("on"); bannerPending = null; }, 12000);
   }
 }, 4000);
 $$("[data-copy]").forEach(b => b.onclick = () => { navigator.clipboard?.writeText(b.dataset.copy); toast("Comando copiado"); });

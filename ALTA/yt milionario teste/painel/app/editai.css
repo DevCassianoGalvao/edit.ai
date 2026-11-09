@@ -58,3 +58,8 @@ body.page-keys{--fundo:#0b0912;--cartao:#171320;--linha:#352a43;--texto:#f3f0fa;
 .page-workbench .ctl .lin:has(#ctlPar){flex-direction:column;align-items:stretch}.page-workbench #ctlPar{align-self:flex-start;flex:none}
 @media(max-width:600px){.page-workbench #tab-fotos{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}.page-workbench #tab-fotos .side{max-height:29vh;border-right:0;border-bottom:1px solid var(--line)}.page-workbench .thead{padding:18px;grid-template-columns:minmax(0,1fr)}.page-workbench .quote{grid-column:auto}}
 body.page-office{--marca:#ab8cf6;--hud:rgba(21,16,31,.90);--hud2:rgba(179,153,255,.14);--txt:#f3f0fa;--mute:#b3a9c0;--ok:#63dfc5;background:#0b0912}
+
+/* Navegação principal com leitura confortável em diferentes tamanhos de janela. */
+.page-workbench .tabs button,.page-workbench .tabs a.esc{font-size:15px;line-height:1.3}
+.page-workbench .tabs .nav-icon{width:18px;height:18px}
+@media(max-width:1180px){.page-workbench .tabs button,.page-workbench .tabs a.esc{font-size:15px;padding:11px 12px}}

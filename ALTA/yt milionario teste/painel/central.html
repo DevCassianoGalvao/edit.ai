@@ -30,6 +30,7 @@ h2{font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--sub);m
 .barra{height:6px;background:var(--linha);border-radius:4px;overflow:hidden}.barra i{display:block;height:100%;background:var(--azul)}
 .alerta{border-radius:var(--r);padding:14px;border:1px solid;display:grid;gap:8px}
 .alerta.alto{background:#2a1517;border-color:#5c2228}.alerta.medio{background:#2a2213;border-color:#5a4719}
+.alerta.info{background:#211b31;border-color:#55427b}
 .alerta b{font-size:15px}.alerta p{margin:0;color:#d9dce3}
 .vazio{color:var(--ok);display:flex;gap:8px;align-items:center}
 button,.btn{font:inherit;font-size:14px;border:1px solid var(--linha);background:var(--card2);color:var(--txt);padding:9px 13px;border-radius:10px;cursor:pointer;min-height:40px}
@@ -103,7 +104,7 @@ async function acao(nome,args={},confirma=true){
 function botoes(lista,ctx){return (lista||[]).map(b=>`<button class="${b==='devolver_fila'?'peri':'pri'}" onclick='acao("${b}",${JSON.stringify(ctx||{})})'>${esc(ROT[b]||b)}</button>`).join('')}
 function rAlertas(){
   const a=S.alertas||[];
-  $('#alertas').innerHTML=a.length?a.map(x=>`<div class="alerta ${x.nivel}"><b>${x.nivel==='alto'?'⛔':'⚠️'} ${esc(x.titulo)}</b><p>${esc(x.texto)}</p>
+  $('#alertas').innerHTML=a.length?a.map(x=>`<div class="alerta ${x.nivel}"><b>${x.nivel==='alto'?'⛔':x.nivel==='info'?'ⓘ':'⚠️'} ${esc(x.titulo)}</b><p>${esc(x.texto)}</p>
     ${x.botoes&&x.botoes.length?`<div class="acoes">${botoes(x.botoes,{pedido:x.pedido,baia:x.baia})}</div>`:''}</div>`).join('')
     :`<div class="card vazio"><span class="bola" style="background:var(--ok)"></span> Tudo andando — nenhum aviso.</div>`;
 }
@@ -115,7 +116,7 @@ function rSaude(){
     chip('Painel','no ar','ok'),
     chip('Gerente',g.vivo?'trabalhando':'parado',g.vivo?'ok':(g.ligado?'erro':'aviso'),`<div class="pequeno">${g.vivo?'visto há '+tempo(g.visto_s):''}</div>`),
     chip('Funcionários',g.ligado?'ligados':'desligados',g.ligado?'ok':'aviso',`<div><button style="min-height:30px;padding:4px 10px" onclick='acao("funcionarios",{ligado:${!g.ligado}},false)'>${g.ligado?'Desligar':'Ligar'}</button></div>`),
-    chip('Volta sozinho (Agendador)',tok?'ativo':'faltando',tok?'ok':'aviso'),
+    chip('Retomada após reinício',tok?'configurada':'manual',tok?'ok':'aviso'),
     chip('Disco C:',d.livre_gb+' GB livres',d.livre_gb<8?'erro':d.livre_gb<15?'aviso':'ok',`<div class="barra"><i style="width:${d.usado_pct}%"></i></div>`),
     chip('Pastas APAGAR',(ap.gb??'?')+' GB · '+(ap.n??'?'),ap.gb>20?'aviso':'ok',ap.n?`<div><button style="min-height:30px;padding:4px 10px" onclick='acao("esvaziar_apagar")'>Mandar p/ Lixeira</button></div>`:''),
     chip('Último erro de IA',S.claude_limite?'registrado':'nenhum recente',S.claude_limite?'erro':'ok'),

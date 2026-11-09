@@ -315,8 +315,8 @@ def alertas(s):
     t = s.get("tarefas") or {}
     if isinstance(t, dict) and t and not all(t.values()):
         falta = ", ".join(k for k, v in t.items() if not v)
-        a.append({"id": "tarefa", "nivel": "medio", "titulo": "Tarefa automática do Windows faltando",
-                  "texto": f"sem: {falta}. Se o PC reiniciar, abra o Edit.AI manualmente; as tarefas automáticas ainda não foram configuradas.", "botoes": []})
+        a.append({"id": "tarefa", "nivel": "info", "titulo": "Inicialização automática não configurada",
+                  "texto": f"Não encontrei as tarefas do Edit.AI ({falta}). Isso não interrompe o trabalho nesta sessão. Se o Windows reiniciar, abra o Edit.AI pelo atalho; a retomada automática precisa ser configurada no Agendador do Windows.", "botoes": []})
     for v in s["pautas"].get("voz_travada", []):
         a.append({"id": "voz_" + v[:20], "nivel": "medio", "titulo": "Locução demorando", "texto": f"\"{v}\" está no roteirista/voz há mais de 45 min.", "botoes": []})
     for p in s["pedidos"]:

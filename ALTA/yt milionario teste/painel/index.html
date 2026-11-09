@@ -389,6 +389,17 @@ main{min-height:0;position:relative}
 .phead{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px}
 .phead h2{margin:0;font:400 36px/1.05 var(--disp);text-transform:uppercase;letter-spacing:.01em;flex:1;min-width:280px}
 .phead .acts{display:flex;gap:8px;flex:none;align-items:center;flex-wrap:wrap}
+.film-controls{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;max-width:100%}
+.film-controls .pill{min-height:38px;display:inline-flex;align-items:center;padding-inline:12px}
+.film-controls .btn{min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.film-controls .btn.gold{background:rgba(155,116,255,.16);color:#c3aaff;border-color:rgba(155,116,255,.48)}
+.film-controls .btn.gold:hover{background:rgba(155,116,255,.25);border-color:#b69aff}
+.film-controls .btn .control-icon{font-size:13px;line-height:1}
+.film-controls .auto-switch{position:relative;width:30px;height:17px;border-radius:99px;background:#45414e;transition:background .16s;flex:none}
+.film-controls .auto-switch::after{content:"";position:absolute;width:11px;height:11px;left:3px;top:3px;border-radius:50%;background:#f4f1fa;transition:transform .16s}
+.film-controls .auto-switch.on{background:#9168e8}
+.film-controls .auto-switch.on::after{transform:translateX(13px)}
+@media(max-width:680px){.film-controls{width:100%;justify-content:flex-start}.phead h2{min-width:0;font-size:30px}}
 .stepper{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin:6px 0 22px}
 .st{position:relative;padding-top:18px}
 .st::before{content:"";position:absolute;top:6px;left:0;right:0;height:3px;border-radius:3px;background:#26262b}
@@ -1599,14 +1610,14 @@ function renderProd(){
   const aviso = !S.Q.vivo && ["na_fila","produzindo","esperando_voce"].includes(p.status)
     ? `<p class="aviso" style="margin-top:10px">Os funcionários estão desligados. Abra a <b>Central</b> e ligue os funcionários para processar a fila.</p>` : "";
   const acts = [];
-  if (!["entregue","cancelado"].includes(p.status)) acts.push(`<button class="btn ${p.auto ? "gold" : ""}" data-a="auto" title="O Claude julga e segue sozinho neste filme">${p.auto ? "✓ Automático" : "Automático"}</button>`);
-  if (["na_fila","produzindo","esperando_voce"].includes(p.status)) acts.push(`<button class="btn" data-a="pausar">❚❚ Pausar</button>`);
-  if (p.status === "pausado") acts.push(`<button class="btn" data-a="retomar">▶ Retomar</button>`);
+  if (!["entregue","cancelado"].includes(p.status)) acts.push(`<button class="btn ${p.auto ? "gold" : ""}" data-a="auto" title="${p.auto ? "Desligar" : "Ligar"} a automação desta produção" aria-pressed="${p.auto ? "true" : "false"}"><span class="auto-switch ${p.auto ? "on" : ""}" aria-hidden="true"></span>${p.auto ? "Automação ligada" : "Ligar automação"}</button>`);
+  if (["na_fila","produzindo","esperando_voce"].includes(p.status)) acts.push(`<button class="btn" data-a="pausar" title="Pausar esta produção"><span class="control-icon" aria-hidden="true">Ⅱ</span>Pausar</button>`);
+  if (p.status === "pausado") acts.push(`<button class="btn" data-a="retomar" title="Retomar esta produção"><span class="control-icon" aria-hidden="true">▶</span>Retomar</button>`);
   if (["na_fila","pausado","enviando"].includes(p.status)) acts.push(`<button class="btn red" data-a="cancelar">Cancelar</button>`);
   const chips = resumoEscolhas(p.escolhas || {}, p.liga || {}).map(([a, b]) => `<span>${esc(a)}: <b>${esc(b)}</b></span>`).join("");
   $("#pDet").innerHTML = `
     <div class="phead"><div style="flex:1;min-width:280px"><div class="eb">${p.baia ? "baia " + p.baia.toUpperCase() + " · " : ""}${p.auto ? "automático · " : ""}${esc(IDIOMAS[p.idioma] || p.idioma)} · foto ${Math.round(p.photo_share*100)}% · modo ${esc(p.modo)}${p.estilo ? " · estilo " + esc(p.estilo) : ""}</div><h2>${esc(p.titulo)}</h2></div>
-      <div class="acts"><span class="pill ${p.status}" style="font-size:12px;padding:6px 11px">${ST_NOME[p.status] || p.status}</span>${acts.join("")}</div></div>
+      <div class="film-controls"><span class="pill ${p.status}" style="font-size:12px">${ST_NOME[p.status] || p.status}</span>${acts.join("")}</div></div>
     <div class="stepper">${passos}</div>
     <div class="now ${voce ? "voce" : ""}">
       <div><div class="k">${voce ? "Sua vez" : p.status === "entregue" ? "Pronto" : "Agora"}</div><div class="v">${esc(p.msg || "—")}</div>${aviso}</div>

@@ -32,3 +32,9 @@ MEMORIA/
 MAPA/.claude/launch.json
 **/data/
 
+
+**/.gerente_pid
+**/.gerente_vivo
+**/.parar_gerente
+**/.central_notificados.json
+

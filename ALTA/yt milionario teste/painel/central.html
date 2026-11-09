@@ -160,11 +160,11 @@ async function pauta(a){
 }
 function img(slug,f){return `/central/arquivo?slug=${encodeURIComponent(slug)}&f=${encodeURIComponent('miniaturas/'+f)}`}
 function rEntregas(){
-  $('#ents').innerHTML=(S.entregas||[]).map(e=>{const capa=e.principal||e.miniaturas.find(m=>m.startsWith('flow_'))||e.miniaturas[0];
+  $('#ents').innerHTML=(S.entregas||[]).map(e=>{const capa=e.principal||e.miniaturas.find(m=>m.startsWith('flow_'))||e.miniaturas[0], pronto=e.pronto===true||Number(e.mb)>0;
     return `<div class="card ent lista">${capa?`<img class="capa" loading="lazy" src="${img(e.slug,capa)}">`:''}
-    <div><b>${esc(e.nome)}</b><div class="pequeno">${esc(e.quando)} · ${e.pronto?'Render concluído · entregas/'+esc(e.slug):'Render ainda não concluído'} · ${e.mb} MB${e.material?' · material no APAGAR':''}</div></div>
+    <div><b>${esc(e.nome)}</b><div class="pequeno">${esc(e.quando)} · ${pronto?'Render concluído · entregas/'+esc(e.slug):'Render ainda não concluído'} · ${e.mb} MB${e.material?' · material no APAGAR':''}</div></div>
     <div class="minis">${e.miniaturas.map(m=>`<img loading="lazy" title="${esc(m)} — toque para marcar como principal" class="${e.principal&&m==='_PRINCIPAL.jpg'?'sel':''}" src="${img(e.slug,m)}" onclick='principal("${e.slug}","${m}")'>`).join('')}</div>
-    <div class="acoes">${e.pronto?`<button class="btn folder" data-pasta-render="${esc(e.slug)}">📁 Abrir pasta do render</button>`:`<span class="pequeno">Render ainda não concluído</span>`}<label class="btn">Enviar miniatura<input type="file" accept="image/*" hidden onchange='enviaThumb("${e.slug}",this)'></label>
+    <div class="acoes">${pronto?`<button class="btn folder" data-pasta-render="${esc(e.slug)}">📁 Abrir pasta do render</button>`:`<span class="pequeno">Render ainda não concluído</span>`}<label class="btn">Enviar miniatura<input type="file" accept="image/*" hidden onchange='enviaThumb("${e.slug}",this)'></label>
     <button onclick='rerender("${e.slug}")'>Re-renderizar</button><button onclick='acao("devolver_material",{slug:"${e.slug}"},false)'>Devolver material</button></div></div>`}).join('');
   $('#ents').querySelectorAll('[data-pasta-render]').forEach(b=>b.onclick=()=>acao('abrir_pasta_entrega',{slug:b.dataset.pastaRender},false));
 }

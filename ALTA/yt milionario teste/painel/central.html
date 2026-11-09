@@ -44,6 +44,8 @@ button:disabled{opacity:.45;cursor:default}
 .item .lin{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .pequeno{font-size:12.5px;color:var(--sub)}
 .entregas{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.ent .btn.folder{background:rgba(155,116,255,.16);color:#d6c7ff;border-color:rgba(155,116,255,.32);font-weight:650}
+.ent .btn.folder:hover{background:rgba(155,116,255,.26);border-color:#9b74ff}
 .ent img.capa{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:#000;display:block}
 .minis{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}.minis img{height:56px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent}
 .minis img.sel{border-color:var(--ok)}
@@ -160,10 +162,11 @@ function img(slug,f){return `/central/arquivo?slug=${encodeURIComponent(slug)}&f
 function rEntregas(){
   $('#ents').innerHTML=(S.entregas||[]).map(e=>{const capa=e.principal||e.miniaturas.find(m=>m.startsWith('flow_'))||e.miniaturas[0];
     return `<div class="card ent lista">${capa?`<img class="capa" loading="lazy" src="${img(e.slug,capa)}">`:''}
-    <div><b>${esc(e.nome)}</b><div class="pequeno">${esc(e.quando)} · ${e.mb} MB${e.material?' · material no APAGAR':''}</div></div>
+    <div><b>${esc(e.nome)}</b><div class="pequeno">${esc(e.quando)} · ${e.pronto?'Render concluído · entregas/'+esc(e.slug):'Render ainda não concluído'} · ${e.mb} MB${e.material?' · material no APAGAR':''}</div></div>
     <div class="minis">${e.miniaturas.map(m=>`<img loading="lazy" title="${esc(m)} — toque para marcar como principal" class="${e.principal&&m==='_PRINCIPAL.jpg'?'sel':''}" src="${img(e.slug,m)}" onclick='principal("${e.slug}","${m}")'>`).join('')}</div>
-    <div class="acoes"><label class="btn">Enviar miniatura<input type="file" accept="image/*" hidden onchange='enviaThumb("${e.slug}",this)'></label>
+    <div class="acoes">${e.pronto?`<button class="btn folder" data-pasta-render="${esc(e.slug)}">📁 Abrir pasta do render</button>`:`<span class="pequeno">Render ainda não concluído</span>`}<label class="btn">Enviar miniatura<input type="file" accept="image/*" hidden onchange='enviaThumb("${e.slug}",this)'></label>
     <button onclick='rerender("${e.slug}")'>Re-renderizar</button><button onclick='acao("devolver_material",{slug:"${e.slug}"},false)'>Devolver material</button></div></div>`}).join('');
+  $('#ents').querySelectorAll('[data-pasta-render]').forEach(b=>b.onclick=()=>acao('abrir_pasta_entrega',{slug:b.dataset.pastaRender},false));
 }
 function principal(slug,m){if(confirm('Marcar '+m+' como miniatura principal deste filme?'))acao('thumb_principal',{slug,arquivo:m},false)}
 async function enviaThumb(slug,inp){const f=inp.files[0];if(!f)return;toast('Enviando…');

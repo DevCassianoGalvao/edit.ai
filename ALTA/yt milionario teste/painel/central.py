@@ -277,11 +277,28 @@ def entregas_info(n=14):
     for d in ds:
         mp4 = next(iter(sorted(d.glob("*.mp4"))), None)
         minis = sorted([f.name for f in (d / "miniaturas").glob("*.jpg") if not f.name.startswith("_teste")]) if (d / "miniaturas").exists() else []
-        out.append({"slug": d.name, "nome": mp4.stem if mp4 else d.name, "mb": round(mp4.stat().st_size / 1e6) if mp4 else 0,
+        out.append({"slug": d.name, "nome": mp4.stem if mp4 else d.name, "pronto": bool(mp4), "mb": round(mp4.stat().st_size / 1e6) if mp4 else 0,
                     "quando": datetime.fromtimestamp((mp4 or d).stat().st_mtime).strftime("%d/%m %H:%M"), "miniaturas": minis,
                     "principal": "_PRINCIPAL.jpg" if (d / "miniaturas" / "_PRINCIPAL.jpg").exists() else None,
                     "material": (PRINCIPAL / f"APAGAR_{d.name}").exists()})
     return out
+
+
+def a_abrir_pasta_entrega(aid, slug, **_):
+    """Abre no Explorador só a pasta final de uma entrega existente."""
+    slug = str(slug or "").strip()
+    if not slug or Path(slug).name != slug or slug in (".", ".."):
+        return False, "identificador de entrega inválido"
+    raiz = (PRINCIPAL / "entregas").resolve()
+    pasta = (raiz / slug).resolve()
+    try:
+        pasta.relative_to(raiz)
+    except ValueError:
+        return False, "a pasta está fora de entregas"
+    if not pasta.is_dir() or not any(pasta.glob("*.mp4")):
+        return False, "o render ainda não foi concluído nesta pasta"
+    os.startfile(str(pasta))
+    return True, "Pasta do render aberta no Explorador"
 
 
 def baias_info(e, peds):
@@ -924,14 +941,16 @@ ACAO_FN = {"retomar_render": a_retomar_render, "retomar_diretor": a_retomar_dire
            "refazer_clipes": a_refazer_clipes, "trocar_trilha": a_trocar_trilha, "rerenderizar": a_rerenderizar,
            "devolver_material": a_devolver_material, "esvaziar_apagar": a_esvaziar_apagar, "reiniciar_gerente": a_reiniciar_gerente,
            "ligar_servicos": a_ligar_servicos, "funcionarios": a_funcionarios, "autostart": a_autostart, "notificar": a_notificar,
-           "testar_aviso": a_testar_aviso, "remoto": a_remoto, "thumb_principal": a_thumb_principal}
+           "testar_aviso": a_testar_aviso, "remoto": a_remoto, "thumb_principal": a_thumb_principal,
+           "abrir_pasta_entrega": a_abrir_pasta_entrega}
 LONGAS = {"retomar_render", "refazer_clipes", "trocar_trilha", "rerenderizar", "esvaziar_apagar"}
 ROTULOS = {"retomar_render": "Retomar render", "retomar_diretor": "Diretor continua", "devolver_fila": "Recomeçar do zero",
            "refazer_clipes": "Refazer clipes ruins", "trocar_trilha": "Trocar trilha", "rerenderizar": "Re-renderizar",
            "devolver_material": "Devolver material do APAGAR", "esvaziar_apagar": "Esvaziar pastas APAGAR",
            "reiniciar_gerente": "Reiniciar gerente", "ligar_servicos": "Ligar serviços", "funcionarios": "Funcionários",
            "autostart": "Abrir com o Windows", "notificar": "Avisos no celular", "testar_aviso": "Testar aviso",
-           "remoto": "Acesso pelo celular", "thumb_principal": "Miniatura principal"}
+           "remoto": "Acesso pelo celular", "thumb_principal": "Miniatura principal",
+           "abrir_pasta_entrega": "Abrir pasta do render"}
 
 
 def executar(body):
@@ -964,9 +983,10 @@ def executar(body):
                 avisar("Edit.AI by Galvão — " + ROTULOS.get(nome, nome) + (" terminou" if ok else " falhou"), resumo, 3 if ok else 4)
         except Exception:  # noqa: BLE001
             pass
-    if nome in ("remoto",):
+    if nome in ("remoto", "abrir_pasta_entrega"):
         corre()
-        return {"ok": True, "id": aid, "resumo": ACOES[aid]["resumo"]}
+        return {"ok": ACOES[aid]["ok"], "id": aid, "resumo": ACOES[aid]["resumo"],
+                **({"erro": ACOES[aid]["resumo"]} if not ACOES[aid]["ok"] else {})}
     threading.Thread(target=corre, daemon=True, name=f"acao-{nome}").start()
     return {"ok": True, "id": aid}
 

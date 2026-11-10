@@ -28,15 +28,42 @@ NC_ND = re.compile(r"(by-nc|by-nd|nc-sa|nc-nd)", re.I)
 MIN_S, MAX_S = 60, 900
 
 
+def baixar_audio(url, destino, limite=50 * 1024 * 1024):
+    """Baixa com limite de tamanho; uma falha não deixa arquivo parcial válido."""
+    parcial = destino.with_suffix(destino.suffix + ".part")
+    try:
+        with S.get(url, timeout=(10, 30), stream=True) as resposta:
+            resposta.raise_for_status()
+            total = 0
+            with parcial.open("wb") as f:
+                for bloco in resposta.iter_content(64 * 1024):
+                    total += len(bloco)
+                    if total > limite:
+                        raise ValueError("arquivo excede o limite de 50 MB")
+                    f.write(bloco)
+            if total == 0:
+                raise ValueError("arquivo vazio")
+        parcial.replace(destino)
+    finally:
+        parcial.unlink(missing_ok=True)
+
+
 def ia_search(termo, rows=12):
-    q = (f'mediatype:audio AND (licenseurl:(*publicdomain*) OR licenseurl:(*zero*) OR licenseurl:(*creativecommons.org/licenses/by/*)) '
-         f'AND NOT collection:(librivoxaudio OR librivox OR audio_bookspoetry OR podcasts OR audio_religion) '
-         f'AND (title:({termo}) OR subject:({termo}) OR description:({termo}))')
+    # Evita expressões complexas que o catálogo pode rejeitar com HTTP 200.
+    palavras = re.findall(r"[^\W_]+", termo, flags=re.UNICODE)[:12]
+    if not palavras:
+        return []
+    termos = " ".join(palavras)
+    q = (f"mediatype:audio AND licenseurl:*publicdomain* AND "
+         f"(title:({termos}) OR subject:({termos}))")
     r = S.get("https://archive.org/advancedsearch.php",
-              params={"q": q, "fl[]": ["identifier", "title", "licenseurl", "creator"], "rows": rows,
-                      "output": "json", "sort[]": "downloads desc"}, timeout=90)
+              params={"q": q, "fl[]": ["identifier", "title", "licenseurl", "creator"],
+                      "rows": max(20, rows), "output": "json", "sort[]": "downloads desc"}, timeout=30)
     r.raise_for_status()
-    return r.json()["response"]["docs"]
+    result = r.json()
+    if "response" not in result:
+        raise RuntimeError("Internet Archive: " + str(result.get("error", "resposta inválida"))[:200])
+    return result["response"].get("docs", [])
 
 
 def ia_files(identifier):
@@ -100,8 +127,7 @@ def main():
                 dst = OUT / (key + Path(f["name"]).suffix.lower())
                 url = f"https://archive.org/download/{d['identifier']}/{requests.utils.quote(f['name'])}"
                 try:
-                    rr = S.get(url, timeout=300); rr.raise_for_status()
-                    dst.write_bytes(rr.content)
+                    baixar_audio(url, dst)
                 except Exception as e:  # noqa: BLE001
                     print("[ia falhou]", key, e); continue
                 pool[key] = {"file": str(dst.relative_to(ROOT)).replace("\\", "/"), "title": f"{d.get('title')} — {f['name']}",
@@ -121,8 +147,7 @@ def main():
                 continue
             dst = OUT / f"{key}.mp3"
             try:
-                rr = S.get(x["preview"], timeout=300); rr.raise_for_status()
-                dst.write_bytes(rr.content)
+                baixar_audio(x["preview"], dst)
             except Exception as e:  # noqa: BLE001
                 print("[fs falhou]", key, e); continue
             pool[key] = {"file": str(dst.relative_to(ROOT)).replace("\\", "/"), "title": x["title"],

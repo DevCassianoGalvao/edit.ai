@@ -67,9 +67,9 @@ GUIAS = [
         {"id": "forte", "nome": "Película velha", "desc": "Grão pesado e borda escura, filme de época.", "previa": "tex_forte.mp4",
          "config": {"acabamento": {"grao": 10, "vinheta": "PI/4", "tremor": True}}},
      ]},
-    {"id": "som", "titulo": "Som", "sub": "REGRA (04/10/2026): trilha SÓ da Biblioteca de Áudio do YouTube Studio; efeitos CC0. Clique para ouvir.",
+    {"id": "som", "titulo": "Som", "sub": "A trilha é pesquisada conforme o tema e o clima do vídeo. Clique para ouvir os exemplos.",
      "tipo": "liga", "opcoes": [
-        {"id": "music", "nome": "Trilha da Biblioteca do YouTube", "desc": "Só faixas da Biblioteca de Áudio do YouTube Studio, uma por clima de bloco; desce sozinha quando a voz entra.",
+        {"id": "music", "nome": "Trilha automática", "desc": "Busca e escolhe faixas conforme o assunto e o clima de cada trecho; baixa o volume durante a narração.",
          "previa": "som_trilha.mp3", "config_on": {"music": True}, "config_off": {"music": False}},
         {"id": "trilha_baixa", "nome": "Trilha bem baixa", "desc": "A música fica ~20 dB abaixo da voz (-34 LUFS) e sobe pouco nas pausas (-27). Pedido do usuário para o Arquivo Colorizado (04/11/2026).",
          "previa": "", "config_on": {"trilha": {"sob_voz_db": -11, "respiro_db": -4}}, "config_off": {"trilha": {}}},

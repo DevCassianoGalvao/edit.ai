@@ -121,9 +121,12 @@ def classifica(pool, probe):
     """clima de cada faixa a partir do título e da medição (LRA alto = tensão)."""
     faixas = {}
     for k, v in pool.items():
-        # REGRA 04/10/2026 (painel): trilha SÓ da Biblioteca de Áudio do YouTube Studio — incompetech, Freesound,
-        # Pixabay etc. ficam de fora mesmo que estejam no music_pool.json
-        if not eh_yt_studio(v):
+        # Permite também faixas obtidas pelo coletor com licença livre identificada.
+        fonte = str(v.get("fonte", ""))
+        licenca = str(v.get("license", "")).lower()
+        livre = fonte in ("Internet Archive", "Freesound (CC0)") and any(
+            x in licenca for x in ("creativecommons.org/publicdomain/zero/", "creativecommons.org/publicdomain/mark/", "creativecommons.org/licenses/by/", "creativecommons.org/licenses/by-sa/")) and not any(x in licenca for x in ("/by-nc", "/by-nd", "nc-sa", "nc-nd"))
+        if not eh_yt_studio(v) and not livre:
             continue
         pr = probe.get(k)
         if not pr or pr["dur_s"] < 40 or any(r in v["title"].lower() for r in RUIM):
@@ -217,8 +220,7 @@ def main():
     probe = json.loads((D / "music_probe.json").read_text("utf-8"))
     faixas = classifica(pool, probe)
     if not faixas:
-        sys.exit("[music] nenhuma faixa da Biblioteca de Áudio do YouTube no music_pool.json (regra 04/10/2026). "
-                 "O usuário baixa no YouTube Studio e põe em assets/music/yt_studio/ — ou desligar a trilha no painel.")
+        sys.exit("[music] nenhuma faixa válida e medida disponível; confira as fontes ou desligue a trilha.")
     print(f"[music] {len(faixas)} faixas úteis: " + ", ".join(f"{c}={sum(1 for f in faixas.values() if f['clima'] == c)}" for c in ("cama", "tensao", "alivio")))
     bl = blocos(beats, paras, meta["audioDuration"])
     # 29/09/2026: capítulos escolhidos por mim em music_por_bloco.json viram os blocos, exatos (faixa pelo que o
@@ -235,6 +237,7 @@ def main():
     ultima = None
     for i, (a_s, z_s, clima) in enumerate(bl):
         cands = [k for k, f in faixas.items() if f["clima"] == clima] or [k for k, f in faixas.items() if f["clima"] == "cama"]
+        cands = cands or list(faixas)
         cands = [k for k in cands if k != ultima] or cands
         key = min(cands, key=lambda k: (usos.get(k, 0), -faixas[k]["dur"]))
         # 28/09/2026: data/music_por_bloco.json {"segundo_do_inicio_do_bloco": "chave"} — eu escolho a faixa pelo que o

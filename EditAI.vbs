@@ -1,5 +1,5 @@
-Set shell = CreateObject("WScript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 root = fso.GetParentFolderName(WScript.ScriptFullName)
-shell.CurrentDirectory = root
-shell.Run "pythonw.exe """ & root & "\EditAI.py""", 1, False
+' O Windows inicia a janela fora do processo que chamou o atalho.
+Set explorer = CreateObject("Shell.Application")
+explorer.ShellExecute "pythonw.exe", """" & root & "\EditAI.py""", root, "open", 1

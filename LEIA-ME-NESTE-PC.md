@@ -66,3 +66,14 @@ no computador com `scripts/trilha_local.py`. Os climas disponíveis são calma, 
 possível cadastrar uma composição própria criada por outra ferramenta local com `--importar`. A geração local
 não chama API e produz música simples; não substitui um serviço especializado de geração musical. As faixas seguem
 a medição e a mixagem com a narração já usadas pelo projeto.
+
+
+## Independência e troca de IA
+
+Abra o Edit.AI pelo atalho da área de trabalho. A janela, o painel e o gerente são processos locais próprios;
+fechar a janela do Claude ou do Codex não deve fechar o Edit.AI. Para a IA escolhida trabalhar, seu executável
+e sua autenticação precisam estar disponíveis neste computador.
+
+Em Configurações > Chaves, selecione o Claude ou o Codex. Uma sessão em andamento não é interrompida pela troca;
+as próximas sessões usam o motor selecionado. Uma retomada em outro motor inicia uma nova sessão com os arquivos
+do projeto, pois os históricos internos dos dois serviços não são intercambiáveis.

@@ -59,6 +59,7 @@
   <p class="sub">Cole cada chave e clique em Salvar. Ela fica guardada só neste computador e o painel nunca mostra a chave inteira.</p>
   <div id="alerta"></div>
   <h2><i style="background:var(--ok)"></i>Qual IA faz o trabalho <small>— escolha uma; não é chave, é a sua conta logada no app</small></h2>
+  <p class="sub">A troca vale para a próxima sessão do agente. Se um agente já estiver trabalhando, ele continua até a sessão terminar. As próximas sessões usam a IA selecionada e os arquivos do projeto.</p>
   <div id="motores" class="motores"></div>
   <div id="lista"></div>
 </main>
@@ -114,11 +115,11 @@
     document.getElementById("motores").innerHTML = ["claude", "codex"].map((k) => {
       const m = MOTOR[k], [c, t] = st(k);
       return `<div class="mo ${e.motor === k ? "on" : ""}" data-motor="${k}">
-        <h3>${m.nome} ${e.motor === k ? '<span class="sel">● EM USO</span>' : ""}<span class="st ${c}">${t}</span></h3>
+        <h3>${m.nome} ${e.motor === k ? '<span class="sel">● SELECIONADA</span>' : ""}<span class="st ${c}">${t}</span></h3>
         <div class="faz">${esc(m.plano)} ${esc(m.como)}</div>
         <div class="links">${m.links.map(([a, u]) => `<a class="lk" href="${u}" target="_blank" rel="noopener">${esc(a)} ↗</a>`).join("")}</div>
         ${e.motor === k ? "" : `<button type="button">Usar o ${m.nome}</button>`}</div>`;
-    }).join("") + `<p class="meta" style="grid-column:1/-1;margin:0">A troca vale para os próximos trabalhos; o que já começou termina na IA em que começou.</p>`;
+    }).join("") + `<p class="meta" style="grid-column:1/-1;margin:0">A seleção vale para a próxima sessão; o agente atual não é interrompido.</p>`;
     document.querySelectorAll("[data-motor] button").forEach((b) => b.addEventListener("click", async () => {
       const k = b.closest("[data-motor]").dataset.motor;
       const r = await fetch("/api/motor", { method: "POST", headers: { "Content-Type": "application/json" },

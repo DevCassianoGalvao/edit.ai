@@ -11,7 +11,11 @@ try:
 except OSError:
     pass
 log = open(HERE / "servidor_console.log", "a", encoding="utf-8")
-subprocess.Popen([sys.executable, "-u", str(HERE / "servidor.py"), "--sem-navegador"], cwd=str(HERE.parent), stdout=log,
-                 stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
-                 creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
+cmd = [sys.executable, "-u", str(HERE / "servidor.py"), "--sem-navegador"]
+flags = getattr(subprocess, "CREATE_NO_WINDOW", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+kwargs = dict(cwd=str(HERE.parent), stdout=log, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL)
+try:
+    subprocess.Popen(cmd, creationflags=flags | 0x01000000, **kwargs)  # CREATE_BREAKAWAY_FROM_JOB
+except OSError:
+    subprocess.Popen(cmd, creationflags=flags, **kwargs)
 print("servidor do painel religado")

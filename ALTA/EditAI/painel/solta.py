@@ -16,5 +16,9 @@ SEM_JANELA = 0x08000000     # CREATE_NO_WINDOW
 
 if len(sys.argv) < 2:
     sys.exit(__doc__)
-subprocess.Popen(sys.argv[1:], creationflags=NOVO_GRUPO | SEM_JANELA, close_fds=True,
-                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+flags = NOVO_GRUPO | SEM_JANELA
+kwargs = dict(close_fds=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+try:
+    subprocess.Popen(sys.argv[1:], creationflags=flags | 0x01000000, **kwargs)  # CREATE_BREAKAWAY_FROM_JOB
+except OSError:
+    subprocess.Popen(sys.argv[1:], creationflags=flags, **kwargs)

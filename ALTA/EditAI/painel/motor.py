@@ -2,7 +2,8 @@
 com o ChatGPT Codex também").
 
 painel/config.json "motor": "claude" (padrão) | "codex". O gerente abre cada Diretor/Revisora/Roteirista com o motor
-escolhido NA HORA de abrir; sessão que já está trabalhando continua no motor em que nasceu (retomar também).
+escolhido NA HORA de abrir; a sessão em andamento continua no motor em que nasceu. Ao mudar de motor, uma retomada
+inicia uma nova sessão com o contexto e os arquivos do projeto; identificadores de sessão não são compartilhados.
 
 - claude: claude.exe do app do Claude (conta do usuário), `-p --output-format stream-json`.
 - codex : codex.exe do app do Codex / `npm i -g @openai/codex` (conta do ChatGPT), `codex exec --json`.

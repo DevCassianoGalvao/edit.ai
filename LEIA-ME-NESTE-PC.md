@@ -57,3 +57,12 @@ A página de origem é registrada, mas a licença dos resultados do Google pode 
 
 As capas de estilos cujas referências originais não existem são apresentadas com uma prévia aproximada. Para criar
 um estilo, ajuste as opções em Novo filme e escolha **Salvar estas escolhas como meu estilo** na etapa Revisar; ele fica em Meus estilos.
+
+
+## Trilha instrumental local
+
+Quando a música estiver ligada, o Diretor pode usar faixas disponíveis ou gerar uma cama instrumental sintética
+no computador com `scripts/trilha_local.py`. Os climas disponíveis são calma, alegre, tensao e neutro. Também é
+possível cadastrar uma composição própria criada por outra ferramenta local com `--importar`. A geração local
+não chama API e produz música simples; não substitui um serviço especializado de geração musical. As faixas seguem
+a medição e a mixagem com a narração já usadas pelo projeto.

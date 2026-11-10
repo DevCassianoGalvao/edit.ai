@@ -70,14 +70,20 @@ ORDEM (mesma do trabalho manual):
    apresentador, foto de outro país) e PARA se achar problema; o render também não sai sem ele. Abra qa/checagem.jpg:
    defeito de verdade -> rejeite (window_rejects.json / photo_side.json + make_photos) e rode preparar de novo;
    alarme falso (ex.: a pessoa da história falando, placa da própria fábrica) -> data/checagem_aceitos.json {id: motivo}.
-6. Trilha automática (se o pedido pedir): leia o roteiro, os capítulos e o estilo. Crie ou atualize data/tema_config.json
-   preservando os demais campos; inclua "tema" e listas "trilha_termos" (até 3 buscas em inglês, instrumentais e
-   ligadas ao assunto e ao clima, por exemplo "gentle gardening instrumental") e "trilha_reserva" (até 2 buscas
-   de clima). Rode `python scripts/fetch_music.py 3` e `python scripts/audio_probe_pool.py music`. Se uma fonte
-   falhar, continue com as faixas locais e outras fontes. Leia data/music_pool.json e data/music_probe.json e selecione
-   as faixas válidas conforme o conteúdo e a emoção dos capítulos. Escreva data/music_por_bloco.json como objeto de
-   segundos de início -> chave da faixa, começando em "0"; sobrescreva o plano anterior para não usar outro filme.
-   Rode `python scripts/music_mix.py` para gerar o áudio final. Se não houver faixa utilizável, desligue music no
+6. Trilha automática (se o pedido pedir): leia o roteiro, os capítulos e o estilo. Decida entre usar faixas já
+   disponíveis, pesquisar acervos, criar uma composição local ou combinar essas opções conforme o vídeo. Não é
+   obrigatório pesquisar na internet se uma faixa existente ou criada localmente for adequada.
+   Para pesquisar, crie ou atualize data/tema_config.json preservando os demais campos; inclua "tema", listas
+   "trilha_termos" (até 3 buscas instrumentais em inglês pelo assunto e clima) e "trilha_reserva" (até 2 buscas
+   de clima), e rode `python scripts/fetch_music.py 3`. Se a fonte falhar, siga com outras opções.
+   Para criar uma cama instrumental sintética simples sem API, escolha calma, alegre, tensao ou neutro segundo
+   o roteiro e rode, por exemplo, `python scripts/trilha_local.py --clima calma --duracao 72`. Não afirme que é
+   música de um modelo especializado. Se criar uma composição original com outra ferramenta local, cadastre-a com
+   `python scripts/trilha_local.py --importar <arquivo> --clima <clima>`.
+   Rode `python scripts/audio_probe_pool.py music`, leia data/music_pool.json e data/music_probe.json e escolha
+   faixas válidas conforme o conteúdo e emoção de cada capítulo. Escreva data/music_por_bloco.json como objeto
+   de segundos de início -> chave da faixa, começando em "0"; sobrescreva o plano anterior para não usar outro filme.
+   Rode `python scripts/music_mix.py`. Se não houver faixa utilizável e a criação local falhar, desligue music no
    pipeline_config.json, explique em data/notas_entrega.md e prossiga com a narração, sem usar áudio de outro filme.
    Miniaturas scripts/make_thumb_<x>.py (número dito + palavra),
    confira a review.jpg. Escreva data/notas_entrega.md.

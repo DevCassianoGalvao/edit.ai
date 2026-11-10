@@ -126,7 +126,13 @@ def classifica(pool, probe):
         licenca = str(v.get("license", "")).lower()
         livre = fonte in ("Internet Archive", "Freesound (CC0)") and any(
             x in licenca for x in ("creativecommons.org/publicdomain/zero/", "creativecommons.org/publicdomain/mark/", "creativecommons.org/licenses/by/", "creativecommons.org/licenses/by-sa/")) and not any(x in licenca for x in ("/by-nc", "/by-nd", "nc-sa", "nc-nd"))
-        if not eh_yt_studio(v) and not livre:
+        # Aceita a composição local somente quando está na pasta prevista do projeto.
+        try:
+            arquivo = (ROOT / str(v.get("file", ""))).resolve()
+            gerada = fonte == "Edit.AI local" and arquivo.is_relative_to((ROOT / "assets/music/geradas").resolve()) and arquivo.is_file()
+        except (OSError, ValueError):
+            gerada = False
+        if not eh_yt_studio(v) and not livre and not gerada:
             continue
         pr = probe.get(k)
         if not pr or pr["dur_s"] < 40 or any(r in v["title"].lower() for r in RUIM):

@@ -94,11 +94,12 @@ Medido em 06/10: ~70 % da demora foram QUEDAS (15 h parado em ~25 h), ~2 h por f
 - COM O GERENTE LIGADO o Claude do chat NÃO pega pedido do painel (só acompanha/conserta quando pedido).
 
 ## TRILHA E CARTÕES POR GÊNERO (04/10/2026 — regra do painel)
-- TRILHA AUTOMÁTICA: quando ligada, o Diretor extrai do roteiro termos de assunto e clima, pesquisa faixas no
-  Internet Archive e Freesound com `scripts/fetch_music.py`, mede com `scripts/audio_probe_pool.py music`, escolhe
+- TRILHA AUTOMÁTICA: quando ligada, o Diretor analisa assunto e clima e pode usar faixas disponíveis, criar áudio local
+  ou pesquisar Internet Archive e Freesound com `scripts/fetch_music.py`. Mede com `scripts/audio_probe_pool.py music`, escolhe
   faixas por capítulo em `data/music_por_bloco.json` e roda `scripts/music_mix.py`. Use também o acervo local da
-  Biblioteca de Áudio do YouTube. Se a busca falhar, use faixas válidas já disponíveis; sem nenhuma, desligue música
-  e registre a falta na entrega. Registre fonte e licença das faixas utilizadas no plano de áudio.
+  Biblioteca de Áudio do YouTube. Quando fizer sentido, ou se não houver faixa adequada, crie uma cama instrumental
+  simples no PC com `scripts/trilha_local.py --clima calma|alegre|tensao|neutro`, meça e inclua no plano. Se não
+  houver áudio utilizável, desligue música e registre a falta na entrega. Registre fonte e licença das faixas utilizadas no plano de áudio.
 - CARTÕES POR GÊNERO (src/scenes/estilos5.tsx, tipos no DOSSIE com as props de OvArquivo em src/overlays/Arquivo.tsx):
   planta (carros/motores/navios: src, titulo, cotas[{x1,y1,x2,y2,rotulo}], chamadas[{x,y,rotulo}]) ·
   caderno (arqueologia: src, titulo, local, data, notas, achado, circulo{x,y,r}) ·

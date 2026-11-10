@@ -66,7 +66,7 @@ LOCK = threading.Lock()
 EST = {"sessoes": {}, "pedidos": {}, "feed": []}
 PROCS = {}   # sid -> Popen (só nesta execução)
 
-PESQUISA = re.compile(r"fetch_images|fetch_photos|fetch_video|yt_lista|yt_probe|photo_dl|prefilter|photo_sheet|banco\.py|"
+PESQUISA = re.compile(r"busca_openverse|fetch_images|fetch_photos|fetch_video|yt_lista|yt_probe|photo_dl|prefilter|photo_sheet|banco\.py|"
                       r"fetch_stock|fetch_dvids|probe_sheet|yt_win_dl|make_clips|source_review|yt_quando_liberar")
 RENDER = re.compile(r"render_e_entrega|fechar\.py render|render_hybrid")
 
@@ -397,7 +397,6 @@ def abrir_sessao(papel, pedido, baia, prompt, resume=None, extra=None):
             cmd += ["--resume", resume]
     if not resume:
         import editai
-        prompt += "\nGERAÇÃO DE IMAGENS: se for necessário e houver chave OpenAI configurada, use python scripts/editai_imagem.py --prompt ... ; respeite os limites configurados.\n"
         request = F.pedido(pedido) or {}
         perfil = next((c for c in editai.profiles() if c["name"] == request.get("canal")), None)
         if perfil and perfil.get("memory"):
@@ -405,7 +404,11 @@ def abrir_sessao(papel, pedido, baia, prompt, resume=None, extra=None):
     if motor == "claude" and not resume:
         memoria = ALTA.parent / "MEMORIA"
         prompt = f"MEMÓRIA DO PROJETO: leia {memoria / 'MEMORY.md'} e os arquivos relacionados antes de começar.\n\n" + prompt
-    proc = popen_solto(cmd, prompt, logf)
+    try:
+        proc = popen_solto(cmd, prompt, logf)
+    except OSError as ex:
+        feed("gerente", f"Não foi possível iniciar o {motor}: {str(ex)[:180]}", pedido)
+        return None
     with LOCK:
         EST["sessoes"][sid] = {"papel": papel, "pedido": pedido, "baia": baia, "pid": proc.pid, "inicio": agora(),
                                "fim": None, "txt": "chegando na mesa", "t": agora(), "area": "mesa", "ajudantes": {},
@@ -707,6 +710,8 @@ def passo():
                     d.update(ultima=sid, retomadas=0, espera_ate=0, pausou=False)
                 else:
                     d["fase"] = "parado"
+                    F.estado(pedido, p.get("etapa") or "preparando", status="esperando_voce",
+                             msg="Não foi possível iniciar o motor de IA selecionado. Confira a Central e tente retomar.")
                     feed("gerente", "Não foi possível iniciar a sessão no motor selecionado.", pedido)
             elif ult.get("claude_session") and agora() < d.get("espera_ate", 0):
                 pass   # espera entre retomadas no mesmo motor
@@ -731,8 +736,14 @@ def passo():
                     texto += "\n\nORDEM DO USUÁRIO (vale mais que o plano anterior):\n" + ordem.read_text("utf-8").strip()
                     ordem.replace(ordem.with_suffix(".lida"))
                 d["ultima"] = abrir_sessao("diretor", pedido, d["baia"], texto, resume=ult["claude_session"])
+                if not d["ultima"]:
+                    d["fase"] = "parado"
+                    F.estado(pedido, p.get("etapa") or "preparando", status="esperando_voce",
+                             msg="Não foi possível retomar a IA. Confira a Central e tente novamente.")
             else:
                 d["fase"] = "parado"
+                F.estado(pedido, p.get("etapa") or "preparando", status="esperando_voce",
+                         msg="O diretor parou antes de terminar. Confira o log na Central para retomar.")
                 feed("gerente", "o diretor parou sem terminar — confira o log", pedido)
         if d["fase"] == "parado" and st == "na_fila":     # alguém devolveu o pedido para a fila: pega de novo
             del EST["pedidos"][pedido]
@@ -843,7 +854,12 @@ def passo():
                 F.salva(reg)
                 F.estado(p["id"], "preparando", status="produzindo", msg=f"o Diretor pegou o filme (baia {b})", pct=2)
                 EST["pedidos"][p["id"]] = {"baia": b, "fase": "diretor", "inicio": agora(), "titulo": p.get("titulo", "")}
-                EST["pedidos"][p["id"]]["ultima"] = abrir_sessao("diretor", p["id"], b, preencher("diretor.md", **ctx(p["id"], b)))
+                sid = abrir_sessao("diretor", p["id"], b, preencher("diretor.md", **ctx(p["id"], b)))
+                EST["pedidos"][p["id"]]["ultima"] = sid
+                if not sid:
+                    EST["pedidos"][p["id"]]["fase"] = "parado"
+                    F.estado(p["id"], "preparando", status="esperando_voce",
+                             msg="Não foi possível iniciar a IA. Confira o Claude e a Central antes de retomar.")
     with LOCK:
         grava(ESTADO, EST)
     VIVO.write_text(str(agora()))

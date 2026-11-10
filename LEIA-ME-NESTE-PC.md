@@ -43,3 +43,17 @@ A janela do Edit.AI usa WebView2 e se conecta ao painel local; não é uma aba d
 A NASA está disponível em Acervos para busca de imagens e vídeos sem chave. Existe também um campo opcional de chave NASA para futuras integrações com api.nasa.gov. A busca abre a página de origem: ainda não importa automaticamente mídias para a linha do tempo. Confira os direitos de cada item.
 
 Foram adicionados os cartões Dado em destaque e Linha do tempo, os tons Noite violeta e Oceano turquesa e a textura Documental suave. Os cartões dependem da escolha no painel e da criação correspondente pelo Diretor; no modo enxuto podem ser limitados. Os tons e textura dependem do acabamento estar ativado no fluxo. As prévias dos tons são aproximações. Nenhuma produção real completa foi testada após essas alterações.
+
+
+## Pesquisa visual automática
+
+O Diretor gera consultas para as tags do roteiro. O coletor Openverse cadastra resultados como candidatos na baia,
+onde eles seguem o fluxo de análise e seleção. Não é uma pesquisa geral em todos os sites da web.
+
+Para ampliar com Google Imagens, cadastre a chave opcional de **Busca Google Imagens (SerpAPI)** em Configurações > Chaves.
+Essa integração usa um serviço externo e pode consumir sua cota ou gerar cobrança conforme seu plano; o limite padrão
+é de seis buscas por produção. Sem chave, o sistema segue com Openverse e os demais acervos disponíveis.
+A página de origem é registrada, mas a licença dos resultados do Google pode não estar informada.
+
+As capas de estilos cujas referências originais não existem são apresentadas com uma prévia aproximada. Para criar
+um estilo, ajuste as opções em Novo filme e escolha **Salvar estas escolhas como meu estilo** na etapa Revisar; ele fica em Meus estilos.

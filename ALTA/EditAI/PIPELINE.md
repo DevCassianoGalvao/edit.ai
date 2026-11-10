@@ -1,3 +1,9 @@
+# Prioridades atuais do Edit.AI
+
+As escolhas do pedido e os ajustes do painel têm prioridade sobre regras históricas abaixo. Respeite a proporção de
+fotos, o estilo, o acabamento e as opções de áudio escolhidas para cada filme. Use o roteiro e a narração fornecidos.
+Não gere imagens por IA automaticamente. As metas de tempo antigas são apenas referências, não garantias.
+
 ## ESTILO "ARQUIVO COLORIZADO" (04/11/2026 — pedido do usuário; referência youtu.be/hnQj4e3U8OM, história de Cuba 1898)
 - Selecionável no painel (Estilos > Meus estilos > "Arquivo Colorizado (história)"); a receita completa para o Diretor está
   em painel/estilos/arquivo-colorizado.json ("receita") e entra no prompt dele (gerente.receita_estilo + diretor.md).
@@ -9,23 +15,15 @@
 - Não tem: fusão cruzada de verdade entre dois planos (o acabamento só vê o filme pronto) e as recriações fotorrealistas
   coloridas por IA do original (~35 % dos planos) — aqui entram fotos colorizadas/autocromos do Commons em tela cheia.
 
-## IMAGENS DE IA COM O PERSONAGEM DO CANAL (02/11/2026 — regra do usuário, SÓ canais com "ia_imagens" no canais.json)
-- Canais: **seu canal** (seu canal, casas antigas, camisa xadrez) e **seu canal** (Jack Mercer, segurança doméstica,
-  camisa azul-marinho). Voz Bill Oxley - Documentary Commentator, inglês, roteiro de 3000 palavras (~22 min).
-- O filme segue o fluxo normal (80 % foto / 20 % vídeo, cartões, zoom lento) e ACRESCENTA no máximo 10 cenas geradas no
-  Nano Banana 2 Lite (fal.ai, endpoint google/nano-banana-lite/edit) com a imagem do personagem como referência
-  (painel/personagens/<canal>.png). Cada cena = prompt próprio escrito pelo Diretor a partir da narração daquele ponto.
-- `scripts/ia_cenas.py plano|gerar|aplicar|verificar`; o `fechar.py preparar` aplica as imagens no timeline.json logo depois do
-  build_plan (troca o corte de foto mais longo do parágrafo; `move` = zoom lento) e confere. Regra NÃO vale para outros canais.
-- Chave da fal em <ALTA>/chaves/fal.txt (nunca imprimir). Custo medido: ~US$ 0,04 a 0,05 por imagem. As baias recebem o script
-  junto com scripts/; canais.json e personagens são lidos da pasta principal.
+## GERAÇÃO DE IMAGENS
+- Geração automática de imagens está pausada a pedido do proprietário. Não execute serviços de geração durante a produção.
 
 ## MODO ENXUTO — 1 VÍDEO SAINDO POR HORA (12/10/2026 — regra permanente do usuário)
-- **80 % imagens / 20 % vídeos em TODO filme e TODO estilo** (fila.novo força photo_share 0.8); YouTube no máx. 15 por filme.
+- **Proporção de imagens e vídeos escolhida no pedido** (photo_share; padrão 0,8); YouTube no máx. 15 por filme.
 - Medido nos quebra-gelos de 12/10: o Remotion desenhava ~30 % do filme e segurava o render (42/63/77 min); 84 % disso
   eram sobreposições (paralaxe 21x, palavra, teletipo, revela, radar...). Agora (`"enxuto": true` no pipeline_config, padrão):
-  sobreposições só ficha/checklist/lupa/antesdepois/comparacao, máx. 1 a cada 3 min; paralaxe máx. 5; sem destaques e
-  números automáticos; estilos de gênero não exigidos. Teste no francês: sobreposições 552 s -> 135 s no Remotion.
+  cartões explicativos e estilos selecionados têm limite para manter o render leve; paralaxe máx. 5. Os destaques de
+  nomes e números escolhidos no painel podem aparecer com limite moderado; estilos de gênero não são exigidos. Teste no francês: sobreposições 552 s -> 135 s no Remotion.
 - Animações de tela cheia (mapa etc.) ficam. Revisão só ANTES do render; o gerente não chama mais a revisora depois da entrega.
 - `"enxuto": false` no pipeline_config volta ao modo antigo (arquivo dark completo).
 

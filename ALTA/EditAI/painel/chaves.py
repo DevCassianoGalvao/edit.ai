@@ -11,6 +11,12 @@ HOME = Path.home()
 
 # nivel: 1 = obrigatória, 2 = recomendada, 3 = opcional
 CHAVES = [
+    {"id": "serpapi", "nome": "Busca Google Imagens (SerpAPI)", "nivel": 3,
+     "arquivo": ALTA / "chaves" / "serpapi.txt",
+     "faz": "Pesquisa imagens de sites na web durante a produção. Sem chave, usa os outros acervos.",
+     "links": [["Criar conta e chave SerpAPI", "https://serpapi.com/manage-api-key"]],
+     "como": "Crie uma conta SerpAPI e cole a chave. Até seis buscas por produção; cada busca pode consumir sua cota.",
+     "custo": "Cota gratuita limitada; planos pagos disponíveis"},
     {"id":"nasa", "nome":"NASA API (opcional)", "nivel":3, "arquivo":ALTA / "chaves" / "nasa.txt",
      "faz":"Chave para serviços api.nasa.gov. A busca da biblioteca de imagens e vídeos usa images-api.nasa.gov e não exige esta chave.",
      "links":[["Obter chave NASA", "https://api.nasa.gov/"]],
@@ -86,18 +92,16 @@ def resumo_para_ia():
     nao = [c["nome"] for c in CHAVES if not tem[c["id"]]]
     regras = []
     if not tem["pexels"] and not tem["pixabay"]:
-        regras.append("sem Pexels e sem Pixabay: material só do Wikimedia Commons e do YouTube")
+        regras.append("sem Pexels e sem Pixabay: use Wikimedia Commons, Openverse e outras fontes disponíveis")
     elif not tem["pexels"]:
         regras.append("sem Pexels: o banco de fotos/vídeos é só o Pixabay (os scripts fetch_* já usam só ele)")
     elif not tem["pixabay"]:
         regras.append("sem Pixabay: o banco de fotos/vídeos é só o Pexels")
     if not tem["dvids"]:
         regras.append("sem DVIDS: NÃO escreva data/dvids_queries_*.txt e não rode fetch_dvids")
-    if not tem["fal"]:
-        regras.append("sem fal.ai: pule o passo das imagens de IA (4b) mesmo em canal com ia_imagens")
     if not tem["youtube"]:
         regras.append("sem chave do YouTube: a busca de vídeo usa o yt-dlp sozinha (fetch_video já cai nele)")
-    return ("\nCHAVES DE API DESTA INSTALAÇÃO (07/11/2026 — regra): use SÓ as fontes que têm chave. Com chave: "
+    return ("\nCHAVES DE API DESTA INSTALAÇÃO (configuração atual): Wikimedia Commons e Openverse podem ser usados sem chave. Com chave: "
             + (", ".join(ok) or "nenhuma") + ". SEM chave (não existem aqui; não tente, não pare nem peça por elas): "
             + (", ".join(nao) or "nenhuma") + "." + "".join("\n- " + r for r in regras) + "\n")
 

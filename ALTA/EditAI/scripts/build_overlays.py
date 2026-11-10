@@ -97,8 +97,11 @@ if ENXUTO:
     MIN_PAPEL = max(4, round(MINUTOS / 4))
     MAX_UM_TIPO = 0.5
     OBRIGATORIOS = [("ficha",), ("checklist",), ("lupa",), ("antesdepois",)]
-    MAX_DESTAQUES = 0
-    MAX_NUMEROS = 0
+    # A escolha do painel deve ter efeito mesmo no modo enxuto.
+    # Mantém um limite moderado para evitar sobrecarregar o vídeo.
+    tem_destaque = bool(cfg.get("estilo_destaque"))
+    MAX_DESTAQUES = min(12, max(2, round(MINUTOS / 2))) if tem_destaque else 0
+    MAX_NUMEROS = min(8, max(1, round(MINUTOS / 3))) if tem_destaque else 0
     PARALAXE_MAX = 5
     PARALAXE_GAP = max(45, MINUTOS * 60 / 6)
 # 04/11/2026 estilo ARQUIVO COLORIZADO (receita em painel/estilos/arquivo-colorizado.json): o texto na tela vem das

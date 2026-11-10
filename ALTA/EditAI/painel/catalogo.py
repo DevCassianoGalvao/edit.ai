@@ -350,6 +350,11 @@ def meus_estilos():
             e = json.loads(p.read_text("utf-8"))
             e.setdefault("id", p.stem)
             e["meu"] = True
+            if e.get("capa"):
+                capa = (HERE / e["capa"]).resolve()
+                if not capa.is_relative_to((HERE / "referencias").resolve()) or not capa.is_file():
+                    e.pop("capa", None)
+                    e["previa_aproximada"] = True
             out.append(e)
         except Exception:  # noqa: BLE001
             pass
@@ -376,5 +381,15 @@ for _p in PRONTOS:
 
 
 def catalogo():
-    return {"guias": GUIAS, "temas": TEMAS, "extras": EXTRAS, "prontos": [dict(p, previa=f"estilo_{p.get('preview_base', p['id'])}.jpg") for p in PRONTOS],
+    prontos = []
+    for estilo in PRONTOS:
+        nome = f"estilo_{estilo.get('preview_base', estilo['id'])}.jpg"
+        aproximada = not (HERE / "previas" / nome).is_file()
+        if aproximada:
+            cor = (estilo.get("escolhas") or {}).get("cor", "neutro")
+            nome = f"cor_{cor}.jpg"
+            if not (HERE / "previas" / nome).is_file():
+                nome = "cor_neutro.jpg"
+        prontos.append(dict(estilo, previa=nome, previa_aproximada=aproximada))
+    return {"guias": GUIAS, "temas": TEMAS, "extras": EXTRAS, "prontos": prontos,
             "meus": meus_estilos()}

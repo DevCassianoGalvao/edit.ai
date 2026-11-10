@@ -1754,7 +1754,7 @@ function htmlEstilosPick(){
   return `<div class="eb">atalho</div><h2 style="margin:0 0 4px;font:400 38px var(--disp);text-transform:uppercase">Estilo pronto</h2>
     <p style="color:var(--ink2);margin:0 0 22px;max-width:760px">Escolha um ponto de partida: ele preenche todas as guias. Depois dá para ajustar qualquer uma. Os seus estilos (criados pelo identificador ou salvos aqui) aparecem primeiro.</p>
     <div class="ops">${all.map(e => `<button class="op ${S.N.estilo === e.id ? "on" : ""}" data-estilo="${esc(e.id)}">
-      <div class="pv" style="background-image:url('${estiloImg(e)}'),url('${pv("cor_" + (e.escolhas?.cor || "neutro") + ".jpg")}')">${e._meu ? `<span class="mv">${e.origem === "referencia" ? "DO SEU VÍDEO" : "MEU"}</span>` : ""}</div><span class="ck">✓</span>
+      <div class="pv" style="background-image:url('${estiloImg(e)}'),url('${pv("cor_" + (e.escolhas?.cor || "neutro") + ".jpg")}')">${e.previa_aproximada ? `<span class="mv">PRÉVIA APROXIMADA</span>` : e._meu ? `<span class="mv">${e.origem === "referencia" ? "DO SEU VÍDEO" : "MEU"}</span>` : ""}</div><span class="ck">✓</span>
       <div class="bd"><div class="nm">${esc(e.nome)}</div><div class="ds">${esc(e.desc || "")}</div></div></button>`).join("")}</div>`;
 }
 function mediaPv(f, poster){
@@ -2000,7 +2000,7 @@ function renderEstilos(soRefs){
           <div style="display:flex;gap:8px;margin-top:12px"><button class="btn gold" data-usar="${esc(e.id)}">Usar num filme novo →</button><span class="chips">${resumoEscolhas(e.escolhas || {}, e.liga || {}).filter(x => ["Legendas", "Cor", "Textura de filme"].includes(x[0])).map(([a, b]) => `<span>${esc(a)}: <b>${esc(b)}</b></span>`).join("")}</span></div>` : ""}
       </div></div>`; }).join("")}</div>` : "";
   if (soRefs && $("#refsWrap")){ $("#refsWrap").innerHTML = refsHtml; wireEstilos(); return; }
-  const card = (e, meu) => `<div class="sty"><div class="pv" style="background-image:url('${estiloImg(e)}'),url('${pv("cor_" + (e.escolhas?.cor || "neutro") + ".jpg")}')">${meu ? `<span class="pill ${e.origem === "referencia" ? "produzindo" : "na_fila"}">${e.origem === "referencia" ? "do seu vídeo" : "meu"}</span>` : ""}</div>
+  const card = (e, meu) => `<div class="sty"><div class="pv" style="background-image:url('${estiloImg(e)}'),url('${pv("cor_" + (e.escolhas?.cor || "neutro") + ".jpg")}')">${e.previa_aproximada ? `<span class="pill na_fila">prévia aproximada</span>` : meu ? `<span class="pill ${e.origem === "referencia" ? "produzindo" : "na_fila"}">${e.origem === "referencia" ? "do seu vídeo" : "meu"}</span>` : ""}</div>
     <div class="bd"><h3>${esc(e.nome)}</h3><p>${esc(e.desc || "")}</p>
     <div class="chips">${resumoEscolhas(e.escolhas || {}, e.liga || {}).filter(x => ["Legendas", "Cor", "Textura de filme", "Som"].includes(x[0])).map(([a, b]) => `<span>${esc(a)}: <b>${esc(b)}</b></span>`).join("")}</div>
     <div class="row"><button class="btn gold" data-usar="${esc(e.id)}">Usar →</button>${meu ? `<button class="btn red" data-apagar="${esc(e.id)}">Remover</button>` : ""}</div></div></div>`;

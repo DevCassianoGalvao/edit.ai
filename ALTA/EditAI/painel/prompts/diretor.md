@@ -12,11 +12,11 @@ META DO USUÁRIO (10/10/2026): 1 vídeo em ~2 h, sem retrabalho. Orçamento: pre
 juízes ~15, montagem+cortes ~30, render ~30. Use as opções de acabamento escolhidas no pedido; respeite a configuração do usuário. Revisão completa ANTES do render (cortes + fotos das animações) para renderizar UMA vez só.
 
 MODO ENXUTO (12/10/2026 — regra do usuário, meta "1 vídeo saindo por hora, bem produzido"):
-- TODO filme é 80 % IMAGENS / 20 % VÍDEOS (photo_share 0.8, em qualquer estilo); YouTube no máx. 15 por filme.
+- Respeite a proporção de fotos e vídeos escolhida no pedido (photo_share); YouTube no máx. 15 por filme.
 - Sobreposições só as que EXPLICAM: ficha, checklist, lupa, antesdepois, comparacao — no DOSSIE escreva ~1 a cada 3 min
   (mín. 1 de cada: ficha, checklist, lupa, antesdepois). NÃO escreva palavra, teletipo, manchete, revela, rolo, quadro,
   fichas, cartao nem estilos de gênero (radar, sonar, planta, periscópio...): o build_overlays tira sozinho.
-- Paralaxe 2.5D no máx. 5 (o paralaxe.py já recorta só 8 fotos). Sem destaques/números automáticos.
+- Paralaxe 2.5D no máx. 5. Use destaques de nomes e números quando o estilo escolhido os habilitar e o roteiro os sustentar.
 - Animações de tela cheia (mapa etc.) continuam como antes. Não há revisora depois da entrega: a revisão é a de antes do render.
 ESTILO DO PEDIDO (04/11/2026): se o pedido.json tem "estilo" e existe painel/estilos/<estilo>.json com "receita"
 (sem o sufixo " (ajustado)"), LEIA a receita e siga — ela manda na montagem deste filme.{ESTILO_RECEITA}
@@ -40,7 +40,13 @@ ORDEM (mesma do trabalho manual):
    Ela faz Pexels/Pixabay + DVIDS EM PARALELO com o YouTube e deixa prontas as folhas qa/probe1 (YouTube),
    qa/probe_api (Pexels) e qa/probe_dv (DVIDS). NÃO rode yt_probe/fetch_stock você
    mesmo enquanto ela trabalha. Siga direto para as fotos.
-3. Busca de fotos -> folhas -> `python scripts/juizes.py preparar N --pais "..." --extra "MARCA/MODELO/EMPRESA do filme: ...;
+3. Busca de fotos: para ampliar os acervos de qualquer tema, crie `data/buscas_openverse.json` com um objeto
+   {"tag_existente": ["busca específica", "outra busca"]} usando as tags do filme e os termos extraídos do roteiro;
+   nunca copie termos de outro filme. Após as buscas existentes e antes de baixar miniaturas ou montar folhas, rode
+   `python scripts/busca_openverse.py data/buscas_openverse.json`. O comando usa também Google Imagens via
+   SerpAPI quando a chave está configurada, com até seis consultas por filme. Se uma fonte falhar, siga com as outras.
+   Os resultados entram em photo_pool.json como candidatos e seguem os mesmos juízes e seleção de imagens.
+   Busca de fotos -> folhas -> `python scripts/juizes.py preparar N --pais "..." --extra "MARCA/MODELO/EMPRESA do filme: ...;
    rejeite outra marca/modelo/empresa"` (07/10: a revisora tirou 27 cortes de um filme pronto por outra montadora —
    o assunto certo se barra AQUI) -> chame o funcionário
    **juiz-fotos** (ferramenta Agent, subagent_type "juiz-fotos") — um por lote, TODOS na mesma mensagem (paralelo),
@@ -51,25 +57,11 @@ ORDEM (mesma do trabalho manual):
    espera, adiante cartões/cenas). Se `data/busca_video.estado` ficar parado mais de 40 min, leia data/busca_video.log.
    Depois chame o juiz-video nas folhas prontas (qa/probe1, qa/probe_api E qa/probe_dv), dizendo a MARCA/MODELO/EMPRESA
    e o PAÍS do filme. Se o Pexels/DVIDS já estão julgados e o YouTube passa de 30 min parado, NÃO espere: siga com o que tem.
-   ORÇAMENTO (10/10): cada filme tem 15 extrações do YouTube (12/10: regra 80 % foto; `python scripts/yt_quota.py` mostra
+   ORÇAMENTO (10/10): cada filme tem 15 extrações do YouTube (`python scripts/yt_quota.py` mostra
    "este filme: N/15"). Acabou (ORCAMENTO_ESGOTADO) = NÃO espere cota: complete com DVIDS/Pexels/Commons/foto e siga. Detalhes antigos, se precisar refazer algo à mão: YouTube só dentro da cota (yt_quota pausa: use `bash {FERRAMENTAS}/yt_quando_liberar.sh <pasta> <log> cmd...`);
    Pexels pelo slot `fetch_stock_api.py 6 --navio`. Folhas de sonda -> funcionário **juiz-video** -> grave
    data/yt_review.json / data/api_review.json -> source_review -> yt_win_dl -> make_clips.
-4b. IMAGENS DE IA COM O PERSONAGEM DO CANAL (02/11/2026 — regra do usuário, SÓ para os canais que têm "ia_imagens" em
-   `{PRINCIPAL}/painel/canais.json`: hoje seu canal e seu canal; o id do canal está no campo "canal" do pedido.json —
-   se vier vazio, ache o canal pelo título/idioma do pedido). Para esses canais o filme segue TUDO como acima (80 % foto /
-   20 % vídeo, cartões, zoom lento) e ACRESCENTA no máximo 10 imagens geradas no Nano Banana 2 Lite (fal.ai), espalhadas:
-   a) depois do tema/beats: `python scripts/ia_cenas.py plano --canal <id>` (escolhe 10 parágrafos espalhados, sem animação);
-   b) leia data/ia_cenas_plano.json e escreva em CADA cena o "prompt" em inglês: uma cena fotográfica CONCRETA do que a narração
-      diz naquele ponto (lugar, objeto, defeito, ação), com o personagem do canal fazendo algo coerente (apontando o defeito,
-      segurando o item, examinando). Sem texto na imagem, sem logo, sem outra pessoa conhecida. Só o que a narração sustenta;
-      nada de número ou marca inventados. Cada cena = um prompt diferente (ângulo, cômodo e ação variados);
-   c) `python scripts/ia_cenas.py gerar` (sobe a referência do personagem; ~US$ 0,05 por imagem; roda em segundo plano
-      enquanto a busca de material espera, ex.: `nohup python scripts/ia_cenas.py gerar > data/ia_gerar.log 2>&1 &`);
-   d) abra 2 ou 3 das imagens geradas em public/stock/ia_NN.jpg: rosto/roupa diferentes do personagem, mão deformada, texto
-      ou marca na imagem = apague o arquivo, ajuste o prompt e rode `gerar --so N` de novo (no máx. 2 tentativas por cena);
-   e) o `fechar.py preparar` já aplica as imagens nos cortes (zoom lento) e confere (`ia_cenas.py aplicar` + `verificar`).
-   Nunca passe de 10 imagens de IA por filme; a chave fica em {PRINCIPAL}/../chaves/fal.txt (nunca imprimir).
+4b. Não gere imagens com IA automaticamente nesta produção. Use mídias obtidas pelas fontes de pesquisa e arquivos disponíveis.
 5. paralaxe, DOSSIE (cartões dos estilos que o pedido ligou, desligue os que o roteiro não sustenta), `fechar.py preparar`
    até QA 0 falhas. UM preparar só para julgar (07/10: rodar 3-4 vezes custava ~1 h): junte TODOS os defeitos —
    suspeitos, revisora, checagem.jpg — numa rodada de rejeições e rode o preparar UMA vez mais para conferir. Olhe qa/suspeitos.jpg e chame a **revisora** nas folhas qa/pre_render/cortes_*.jpg E qa/pre_render/animacoes_*.jpg (o preparar fotografa cada cartão/mapa/animação do Remotion), dizendo no prompt a MARCA/MODELO/EMPRESA e o PAÍS do filme (07/10: sem isso ela deixou passar volante da Peugeot num filme BYD/Toyota). REVISÃO OBRIGATÓRIA E COMPLETA AQUI, ANTES DO RENDER (10/10): texto cortado/sobreposto em cartão ou mapa, apresentador, marca d'água, legenda, assunto errado — corrija TUDO agora (animação: ajuste src/scenes e confira só com `python scripts/stills_animacoes.py`); o filme renderiza UMA vez. Os 2 renders extras do Prelude (apresentador num clipe e "Corea del S" cortado num mapa) eram visíveis nessas folhas.

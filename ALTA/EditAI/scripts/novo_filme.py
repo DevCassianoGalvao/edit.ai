@@ -26,11 +26,13 @@ DECISOES = ["beats.json", "clips.json", "photo_pool.json", "photo_prefilter.json
             "mudados.json", "plan_antes.json", "burned_text.json", "commons_files.json", "commons_video_pool.json",
             "stock_api_pool.json", "sheets_map.json", "probe_cm.json", "probe_cm_curada.json", "probe_yt_big.json",
             "master_transcript.json", "whisper_raw.json", "source_meta.json", "photo_dl_limite.json", "fechar.log",
-            "segment_rejects.json", "image_locks.json", "yt_crop.json", "ia_cenas_plano.json", "ia_cenas_log.json"]   # 03/10: travas por corte do filme anterior vazavam
+            "segment_rejects.json", "image_locks.json", "yt_crop.json", "ia_cenas_plano.json", "ia_cenas_log.json",
+            "tema_config.json", "buscas_openverse.json", "music_por_bloco.json", "music_plan.json", "music_probe.json",
+            "sfx_plan.json", "sfx_probe.json"]   # 03/10: travas por corte do filme anterior vazavam
 SCRIPTS_TEMA = ["scripts/beats.py", "scripts/fetch_images.py", "scripts/fetch_images_cat.py", "scripts/build_plan.py",
                 "scripts/build_overlays.py", "src/scenes/index.ts"]
 PESADO = ["assets/photos", "assets/thumbs", "assets/banco", "public/stock", "out/hybrid", "out/bundle", "out/final.mp4",
-          "out/final_prenorm.mp4", "out/final_v1.mp4", "input/youtube/slices", "qa/photos", "qa/probe1",
+          "out/final_prenorm.mp4", "out/final_v1.mp4", "public/music.m4a", "public/final_audio.m4a", "public/voice_norm.wav", "input/youtube/slices", "qa/photos", "qa/probe1",
           "qa/cortes_final", "qa/final_cortes", "qa/pre_render", "qa/final_mp4", "qa/dense", "painel/_cache"]
 
 

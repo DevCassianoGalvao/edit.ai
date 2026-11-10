@@ -198,6 +198,12 @@ main{min-height:0;position:relative}
 
 /* ---------- LINHA DO TEMPO ---------- */
 #tab-linha{grid-template-columns:minmax(0,1fr) 340px;grid-template-rows:auto 1fr;min-height:0}
+.linha-vazia{display:none}
+#tab-linha.vazia > :is(.play,.rside,.cutsec){display:none}
+#tab-linha.vazia .linha-vazia{grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:55vh;text-align:center;padding:32px}
+.linha-vazia-card{max-width:480px;padding:36px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+.linha-vazia-card h2{margin:0 0 10px;font-size:23px}.linha-vazia-card p{color:var(--mute);line-height:1.6;margin:0 0 22px}
+
 .play{padding:16px 22px 10px 28px;min-width:0}
 .stagewrap{display:flex;justify-content:center}
 .stage{position:relative;width:100%;max-width:calc((100vh - 520px) * 16 / 9);min-width:440px;transition:max-width .25s;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px var(--line),0 24px 60px rgba(0,0,0,.55)}
@@ -747,6 +753,7 @@ main{min-height:0;position:relative}
 
     <!-- ===================== LINHA DO TEMPO ===================== -->
     <section class="tab paused" id="tab-linha">
+      <div class="linha-vazia"><div class="linha-vazia-card"><h2>A linha do tempo está vazia</h2><p>Quando você iniciar uma produção, os cortes aparecerão aqui. Seus vídeos entregues continuam disponíveis na Central.</p><button class="btn big" onclick="setTab('novo')">Criar novo filme</button></div></div>
       <div class="play">
         <div class="stagewrap">
           <div class="stage" id="stage">
@@ -912,6 +919,7 @@ function setTab(t){
 }
 $$(".tabs button").forEach(b => b.onclick = () => setTab(b.dataset.tab));
 function keysBar(){
+  if (S.tab === "linha" && S.L && !S.L.items.length){ $("#keys").innerHTML = ""; return; }
   if (!["fotos", "linha"].includes(S.tab)){
     const dica = {prod: "Os filmes da fila, na ordem. Quando aparecer “sua vez”, julgue na aba indicada e clique em Terminei → continuar.",
                   novo: "Passe o mouse nas prévias para ver em movimento · clique no ▶ para ouvir a trilha e os efeitos.",
@@ -1151,6 +1159,14 @@ async function loadLinha(){
   Object.assign(S.ver, S.L.versao);
   const L = S.L;
   L.dur = L.total / L.fps;
+  const vazia = !L.items.length;
+  $("#tab-linha").classList.toggle("vazia", vazia);
+  if (vazia){
+    aud.pause(); aud.removeAttribute("src"); aud.load(); vA.pause(); vB.pause();
+    $("#loading").style.display = "none"; S.li = -1; keysBar(); return;
+  }
+  keysBar();
+  $("#noaudio").style.display = L.tem_audio ? "none" : "block";
   if (L.tem_audio){ if (!aud.src) aud.src = "/pub/audio.mp3" + bqq(); } else $("#noaudio").style.display = "block";
   renderScrub(); renderCuts(); renderSide();
   $("#loading").style.display = "none";
@@ -1304,7 +1320,7 @@ function syncVid(it, t, force){
   if (aud.paused && !v.paused) v.pause();
 }
 function showAt(t, force){
-  if (!S.L) return;
+  if (!S.L?.items.length) return;
   const f = t * S.L.fps, i = idxAt(f), it = S.L.items[i];
   if (i !== S.li || force){ S.li = i; showItem(it, t); markCut(); }
   else if (it.kind === "video") syncVid(it, t, false);
@@ -1335,10 +1351,10 @@ function markCut(){
 }
 let raf;
 function loop(){ showAt(aud.currentTime); if (!aud.paused) raf = requestAnimationFrame(loop); }
-function play(){ if (!S.L) return; aud.play().then(() => { $("#tab-linha").classList.remove("paused"); $("#bPlay").textContent = "❚❚"; cancelAnimationFrame(raf); loop(); }).catch(e => toast("Não tocou: " + e.message)); }
+function play(){ if (!S.L?.items.length) return; aud.play().then(() => { $("#tab-linha").classList.remove("paused"); $("#bPlay").textContent = "❚❚"; cancelAnimationFrame(raf); loop(); }).catch(e => toast("Não tocou: " + e.message)); }
 function pause(){ aud.pause(); vA.pause(); vB.pause(); $("#tab-linha").classList.add("paused"); $("#bPlay").textContent = "▶"; cancelAnimationFrame(raf); }
-function seekTo(t){ if (!S.L) return; t = Math.max(0, Math.min(S.L.dur - 0.05, t)); aud.currentTime = t; showAt(t, true); if (aud.paused) setTimeout(() => syncVid(S.L.items[S.li], t, true), 30); }
-function stepCut(d){ const i = Math.max(0, Math.min(S.L.items.length - 1, S.li + d)); seekTo(S.L.items[i].from / S.L.fps + 0.02); $(`#cuts .cc[data-i="${i}"]`)?.scrollIntoView({block:"nearest", behavior:"smooth"}); }
+function seekTo(t){ if (!S.L?.items.length) return; t = Math.max(0, Math.min(S.L.dur - 0.05, t)); aud.currentTime = t; showAt(t, true); if (aud.paused) setTimeout(() => syncVid(S.L.items[S.li], t, true), 30); }
+function stepCut(d){ if (!S.L?.items.length) return; const i = Math.max(0, Math.min(S.L.items.length - 1, S.li + d)); seekTo(S.L.items[i].from / S.L.fps + 0.02); $(`#cuts .cc[data-i="${i}"]`)?.scrollIntoView({block:"nearest", behavior:"smooth"}); }
 aud.onpause = () => { $("#tab-linha").classList.add("paused"); $("#bPlay").textContent = "▶"; vCur.pause(); };
 aud.onended = pause;
 $("#bPlay").onclick = () => aud.paused ? play() : pause();
@@ -1406,6 +1422,10 @@ setInterval(async () => {
   let v; try { v = await api("/api/versao"); } catch { return; }
   const tl = ["timeline.json","clips.json"].some(k => S.L && v[k] !== S.ver[k]);
   const ph = ["photo_side.json","photo_pool.json"].some(k => S.F && v[k] !== S.ver[k]);
+  if (tl && S.L && !S.L.items.length){
+    if (S.tab === "linha") await loadLinha(); else S.L = null;
+    return;
+  }
   if (tl || ph){
     const kind = tl ? "plano" : "fotos", now = Date.now();
     if ($("#banner").classList.contains("on") || (kind === bannerLastKind && now - bannerLastAt < 60000)) return;

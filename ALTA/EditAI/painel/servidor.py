@@ -123,14 +123,12 @@ def dentro(base, p):
 def filme():
     cfg = jl(cd() / "pipeline_config.json", {})
     meta = jl(cd() / "source_meta.json", {})
-    nome = None
-    idx = cr() / "src" / "scenes" / "index.ts"
-    if idx.exists():
-        m = re.search(r"Tema:\s*(.+?)(?:\s*\(|\.\s*$|$)", idx.read_text("utf-8"), re.M)
-        nome = m and m.group(1).strip()
-    bj = jl(cd() / "beats.json", {})
-    if not nome:
-        nome = next((b.get("capitulo") for b in bj.get("beats", []) if b.get("capitulo")), "filme atual")
+    # O título vem do pedido associado à baia, não dos scripts de um filme antigo.
+    baia = getattr(_CTX, "baia", None) or "b1"
+    pedidos = F.todos()
+    atual = next((x for x in pedidos if (x.get("baia") or "b1") == baia
+                  and x.get("status") in ("produzindo", "pausado", "esperando_voce")), None)
+    nome = (atual or {}).get("titulo") or ("Filme em edição" if meta.get("durationSec") else "Nenhum filme em produção")
     return {"nome": nome, "idioma": cfg.get("screenLanguage", "?"), "duracao": meta.get("durationSec", 0),
             "photo_share": cfg.get("photo_share", 0.5), "modo": cfg.get("modo", "padrao"),
             "tom": (cfg.get("acabamento") or {}).get("tom")}
@@ -340,8 +338,8 @@ def linha():
     render_ok = (cd() / "timeline_renderizado.json").exists() and \
         (cd() / "timeline_renderizado.json").read_bytes() == (cd() / "timeline.json").read_bytes()
     return {"fps": fps, "total": tl.get("durationInFrames") or (items[-1]["from"] + items[-1]["dur"] if items else 0),
-            "items": items, "caps": caps, "frases": frases, "travas": travas(tl["items"], fps, minutos, cfg, no_plano),
-            "render_ok": render_ok, "tem_audio": (cp() / "audio.mp3").exists(), "sem_arquivo": sem_arquivo,
+            "items": items, "caps": caps, "frases": frases, "travas": travas(tl["items"], fps, minutos, cfg, no_plano) if items else [],
+            "render_ok": render_ok, "tem_audio": bool(items) and (cp() / "audio.mp3").exists(), "sem_arquivo": sem_arquivo,
             "versao": versao()}
 
 

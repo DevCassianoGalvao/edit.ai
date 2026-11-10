@@ -4,7 +4,7 @@ Esta pasta contém a cópia do pacote completo fornecido pelo proprietário. A p
 
 - **Abrir o aplicativo:** use o atalho Edit.AI by Galvão na área de trabalho ou execute `Abrir Edit.AI by Galvão.bat`. Ele abre uma janela própria usando WebView2 e o painel local. Para aplicar atualizações do servidor já aberto, feche a janela e reinicie o servidor do painel. Painel: http://127.0.0.1:8876/ ; Central: http://127.0.0.1:8876/central .
 - **Abrir o Mapa de imagens:** execute `ABRIR_MAPA.bat` (http://127.0.0.1:8877/).
-- **Primeiro uso:** abra Chaves no painel e configure as integrações necessárias; cadastre seus canais pelo modelo `ALTA/yt milionario teste/painel/canais.exemplo.json`. Na Central, ligue os funcionários quando estiver pronto. O motor pode ser Claude ou Codex.
+- **Primeiro uso:** abra Chaves no painel e configure as integrações necessárias; cadastre seus canais pelo modelo `ALTA/EditAI/painel/canais.exemplo.json`. Na Central, ligue os funcionários quando estiver pronto. O motor pode ser Claude ou Codex.
 - **Dependências:** já foram instaladas para esta cópia neste PC. Para reinstalar em outro ambiente, use `INSTALAR_DEPENDENCIAS.bat`, depois de instalar Python, Node.js, Git Bash e FFmpeg. A primeira utilização de modelos pode exigir internet e bastante espaço em disco.
 - **Agentes e memória:** a pasta de trabalho é `MAPA`; as regras copiadas estão em `MEMORIA`. O gerente está configurado para essas pastas. A automação por agentes usa permissões amplas do programa original; ligue os funcionários apenas quando desejar iniciar o trabalho automático.
 - **Recuperação automática:** os nomes de tarefas agendadas da cópia são distintos dos da instalação anterior. Não foram criadas tarefas de inicialização automática; a Central e o gerente podem ser iniciados pelo atalho acima.
@@ -27,7 +27,7 @@ O indicador de conexão distingue monitor, funcionários desligados e gerente se
 
 Abra Estúdio no painel. Cadastre um canal com idioma, memória editorial, estilo e referência de miniatura. Para guardar opções de um filme, selecione o canal em Novo filme, ajuste as guias e escolha Salvar preset do canal na etapa Revisar. No perfil do canal é possível definir o preset padrão. O cadastro editorial é separado dos canais de Pautas.
 
-Na aba Miniaturas, gere uma imagem com a chave OpenAI cadastrada em Configurações > Chaves; o estilo e a referência de canal são enviados ao serviço. O texto é adicionado na prévia e o PNG final baixado pelo navegador. O botão Salvar estilo no canal guarda cor, tamanho, posição e instruções visuais. As imagens originais ficam em `ALTA/yt milionario teste/painel/editai_data/thumbs`.
+Na aba Miniaturas, gere uma imagem com a chave OpenAI cadastrada em Configurações > Chaves; o estilo e a referência de canal são enviados ao serviço. O texto é adicionado na prévia e o PNG final baixado pelo navegador. O botão Salvar estilo no canal guarda cor, tamanho, posição e instruções visuais. As imagens originais ficam em `ALTA/EditAI/painel/editai_data/thumbs`.
 
 As configurações do estúdio permitem definir modelos para novos funcionários e um teto diário ESTIMADO para imagens OpenAI. Você deve informar um preço por imagem; o limite é uma conta local aproximada, não controla a cobrança real do provedor, outros serviços nem despesas prévias. A página Tempo e custos exibe registros locais e o histórico da fila; não é uma fatura.
 

@@ -4,7 +4,7 @@
 
 **Antes de abrir o Claude, só isto:**
 
-1. Na pasta `C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\Edit.AI by Galvão\MAPA`, coloque a narração como `audio.mp3`, o roteiro como `roteiro.txt` e a legenda como `legenda.srt` (os três da mesma safra).
+1. Na pasta `C:\Users\Cassiano\Desktop\Edit.AI by Galvao\Edit.AI by Galvão\MAPA`, coloque a narração como `audio.mp3`, o roteiro como `roteiro.txt` e a legenda como `legenda.srt` (os três da mesma safra).
 2. Abra o Claude Code **na pasta mapa** e cole este prompt (ou o `PROMPT_v_IMAGENS.txt`, que manda seguir este e já responde as perguntas).
 
 Nada de chave de API paga, nada de YouTube. O filme sai inteiro de **fotos de bancos públicos já integrados na pasta mapa** (Wikimedia Commons, NASA, Internet Archive, Openverse), com movimento de câmera feito pelo ffmpeg e animações do Remotion.
@@ -13,7 +13,7 @@ Nada de chave de API paga, nada de YouTube. O filme sai inteiro de **fotos de ba
 
 ## EXECUTION MODE: FULLY AUTONOMOUS — ZERO FRICTION (after Phase -1)
 
-**Work directly in the mapa folder.** Do NOT create a new project elsewhere, do NOT scaffold a new Remotion app — `edicao/` and `edicao_remotion/` already exist. All paths below are relative to `C:\Users\Cassiano\Desktop\SALA DE MONTAGEM\Edit.AI by Galvão\MAPA`.
+**Work directly in the mapa folder.** Do NOT create a new project elsewhere, do NOT scaffold a new Remotion app — `edicao/` and `edicao_remotion/` already exist. All paths below are relative to `C:\Users\Cassiano\Desktop\Edit.AI by Galvao\Edit.AI by Galvão\MAPA`.
 
 The ONLY mandatory interaction before Phase 0 is Phase -1 (animations/subtitles). After that, run the full pipeline end-to-end autonomously. No questions mid-run, no approval stops. Make every decision yourself using the rules below, log it in `data/decisions_log.md`, and keep going. You only speak to me: (a) a required input is missing or stale at startup; (b) the yield measurement of Phase 5.1; (c) when the final render starts (so I close Chrome); (d) delivery.
 

@@ -1,3 +1,3 @@
-@echo off
-cd /d "%~dp0"
-wscript.exe "%~dp0ALTA\yt milionario teste\painel\app\SalaMontagem.vbs"
+@echo off
+cd /d "%~dp0"
+start "" wscript.exe "%~dp0EditAI.vbs"

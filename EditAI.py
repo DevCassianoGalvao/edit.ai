@@ -3,7 +3,7 @@ import os, subprocess, sys, time, urllib.request, json, traceback
 from datetime import datetime
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
-PROJECT=ROOT/'ALTA'/'yt milionario teste'
+PROJECT=ROOT/'ALTA'/'EditAI'
 PANEL=PROJECT/'painel'
 LOG=ROOT/'abertura_editai.log'
 def registro(msg):

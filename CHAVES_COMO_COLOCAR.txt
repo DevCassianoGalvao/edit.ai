@@ -3,7 +3,7 @@ CHAVES DO EDIT.AI BY GALVÃO — este pacote NÃO leva nenhuma chave (de propós
 Pasta desta ferramenta (CLAUDE CODE ALTA PRODUÇÃO\chaves\):
   darkplanner.txt   chave da API de locução (DarkPlanner). Sem ela os funcionários não geram a voz.
   gemini.txt        chave do Gemini (usada na análise de imagens/vídeos). Opcional.
-Pasta yt milionario teste\data\:
+Pasta EditAI\data\:
   youtube_api_key.txt   chave da YouTube Data API v3 (busca de vídeos virais e raio-x dos canais).
 Pasta do seu usuário do Windows (C:\Users\SEU_USUARIO\):
   .pexels_key       chave do Pexels (fotos e vídeos de banco livre).
@@ -11,4 +11,4 @@ Pasta do seu usuário do Windows (C:\Users\SEU_USUARIO\):
   .dvids_key        chave do DVIDS (acervo militar dos EUA). Opcional.
 
 Cada arquivo tem SÓ a chave, em uma linha, sem aspas nem espaços. Nunca coloque chaves dentro de zip que você envie a alguém.
-Para o YouTube baixar em boa qualidade pode ser preciso também um cookies.txt (exportado do seu Chrome) em yt milionario teste\.
+Para o YouTube baixar em boa qualidade pode ser preciso também um cookies.txt (exportado do seu Chrome) em EditAI\.
